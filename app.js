@@ -49,7 +49,7 @@ bot.dialog('/', [
 bot.dialog('help', [
   function (session) {
     session.send(prompts.helpMessage),
-      builder.Prompts.choice(session, prompts.newSearchMessage, "Yes|No")
+      builder.Prompts.choice(session, prompts.newSearchMessage, "Yes|No|Search Genes", {listStyle: 3})
   },
   function (session, results) {
     switch (results.response.index) {
@@ -58,6 +58,9 @@ bot.dialog('help', [
         break;
       case 1:
         session.beginDialog('start');
+        break;
+      case 2:
+        session.beginDialog('find gene');
         break;
       default:
         session.endDialog();
@@ -71,12 +74,29 @@ bot.dialog('test', function (session) {
   })
 }).triggerAction({matches: /^test pmkb/});
 
-bot.dialog('genes', function (session) {
+bot.dialog('find gene', [
+  function (session) {
+    builder.Prompts.text(session, 'What gene are you looking for?');
+  },
+  function (session, results) {
+    const geneName = results.response;
+    pmkbClient.getGenes(function (err, genes) {
+      async.filter(genes, function (gene, cb) {
+        cb(null, gene.name === geneName)  //TODO: match via regex
+      }, function (err, res) {
+        session.endDialog(res.length && res[0].name || ('Gene' + geneName + ' does not exist'));
+        // TODO: Find all interpretations for this gene
+      })
+    })
+  }
+]).triggerAction({matches: /^find gene/});
+
+bot.dialog('list genes', function (session) {
   pmkbClient.getGenes(function (err, genes) {
     async.map(genes, function (gene, cb) {
       cb(null, gene.name)
     }, function (err, geneNames) {
-      session.send(geneNames.join(', '));
+      session.endDialog(geneNames.join(', '));
     })
   })
 }).triggerAction({matches: /^genes/});
