@@ -1,6 +1,9 @@
 var restify = require('restify');
 var builder = require('botbuilder');
 var prompts = require('./prompts');
+const PMKBClient = require('./lib/pmkbClient');
+const async = require('async');
+const configs = require('./config/configs');
 
 //=========================================================
 // Bot Setup
@@ -8,7 +11,7 @@ var prompts = require('./prompts');
 
 // Setup Restify Server
 var server = restify.createServer();
-server.listen(process.env.port || process.env.PORT || 3978, function () {
+server.listen(configs.get('APPLICATION_PORT'), function () {
    console.log('%s listening to %s', server.name, server.url); 
 });
   
@@ -24,6 +27,9 @@ server.post('/api/messages', connector.listen());
 
 // var recognizer = new builder.LuisRecognizer('');
 // bot.recognizer(recognizer);
+
+// Config PMKB Client
+const pmkbClient = new PMKBClient(configs.get('PMKB_HOST'), configs.get('PMKB_USER'), configs.get('PMKB_PASS'));
 
 //=========================================================
 // Bots Dialogs
@@ -58,4 +64,20 @@ bot.dialog('help', [
                 break;
     }
 }]).triggerAction({matches: /^help/i});
+
+bot.dialog('test', function (session) {
+  pmkbClient.isAlive(function (err, isUp) {
+    session.send('PMKB is ' + (isUp ? 'up' : 'down'));
+  })
+}).triggerAction({matches: /^test pmkb/});
+
+bot.dialog('genes', function (session) {
+  pmkbClient.getGenes(function (err, genes) {
+    async.map(genes, function (gene, cb) {
+      cb(null, gene.name)
+    }, function (err, geneNames) {
+      session.send(geneNames.join(', '));
+    })
+  })
+}).triggerAction({matches: /^genes/});
 
