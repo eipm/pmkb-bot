@@ -29,6 +29,27 @@ server.post('/api/messages', connector.listen());
 // Bots Dialogs
 //=========================================================
 
-bot.dialog('/', function (session) {
-    session.send("Hello World");
-});
+bot.dialog('start', function (session) {
+    session.send("Hi there!");
+    session.beginDialog('help');
+}).triggerAction({matches: /^hello/i});
+
+bot.dialog('help', [
+    function(session){
+        session.send(prompts.helpMessage),
+        builder.Prompts.choice(session, "Do you want to start a new search?", "Yes|No")
+    },
+    function(session, results){
+         switch (results.response.index) {
+            case 0:
+                session.beginDialog('help');
+                break;
+            case 1:
+                session.beginDialog('start');
+                break;
+            default:
+                session.endDialog();
+                break;
+    }
+}]).triggerAction({matches: /^help/i});
+
