@@ -34,10 +34,16 @@ bot.dialog('start', function (session) {
     session.beginDialog('help');
 }).triggerAction({matches: /^hello/i});
 
+bot.dialog('/', [
+    function(session){
+        session.send(prompts.helpMessage),
+        builder.Prompts.choice(session, prompts.newSearchMessage, "Yes|No")
+    }]);
+
 bot.dialog('help', [
     function(session){
         session.send(prompts.helpMessage),
-        builder.Prompts.choice(session, "Do you want to start a new search?", "Yes|No")
+        builder.Prompts.choice(session, prompts.newSearchMessage, "Yes|No")
     },
     function(session, results){
          switch (results.response.index) {
