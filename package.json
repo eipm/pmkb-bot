@@ -1,0 +1,23 @@
+{
+  "name": "pmkb-hackfest",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ElementoLab/pmkb-hackfest.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ElementoLab/pmkb-hackfest/issues"
+  },
+  "homepage": "https://github.com/ElementoLab/pmkb-hackfest#readme",
+  "dependencies": {
+    "botbuilder": "^3.7.0",
+    "restify": "^4.3.0"
+  }
+}
