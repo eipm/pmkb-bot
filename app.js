@@ -79,6 +79,7 @@ bot.dialog('find gene', [
     builder.Prompts.text(session, 'What gene are you looking for?');
   },
   function (session, results) {
+    session.sendTyping();
     const geneName = results.response;
     pmkbClient.getGenes(function (err, genes) {
       async.filter(genes, function (gene, cb) {
