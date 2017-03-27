@@ -1,6 +1,8 @@
 var restify = require('restify');
 var builder = require('botbuilder');
 var prompts = require('./prompts');
+const PMKBClient = require('./lib/pmkbClient');
+const async = require('async');
 
 //=========================================================
 // Bot Setup
@@ -24,6 +26,9 @@ server.post('/api/messages', connector.listen());
 
 // var recognizer = new builder.LuisRecognizer('');
 // bot.recognizer(recognizer);
+
+// Config PMKB Client
+const pmkbClient = new PMKBClient('http://pmkb-s.weill.cornell.edu', 'testuser', 'password');
 
 //=========================================================
 // Bots Dialogs
@@ -52,4 +57,20 @@ bot.dialog('help', [
                 break;
     }
 }]).triggerAction({matches: /^help/i});
+
+bot.dialog('test', function (session) {
+  pmkbClient.isAlive(function (err, isUp) {
+    session.send('PMKB is ' + (isUp ? 'up' : 'down'));
+  })
+}).triggerAction({matches: /^test pmkb/});
+
+bot.dialog('genes', function (session) {
+  pmkbClient.getGenes(function (err, genes) {
+    async.map(genes, function (gene, cb) {
+      cb(null, gene.name)
+    }, function (err, geneNames) {
+      session.send(geneNames.join(', '));
+    })
+  })
+}).triggerAction({matches: /^genes/});
 
