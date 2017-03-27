@@ -12,15 +12,15 @@ const configs = require('./config/configs');
 // Setup Restify Server
 var server = restify.createServer();
 server.listen(configs.get('APPLICATION_PORT'), function () {
-   console.log('%s listening to %s', server.name, server.url); 
+  console.log('%s listening to %s', server.name, server.url);
 });
-  
+
 // Create chat bot
 var connector = new builder.ChatConnector({
-    appId: process.env.MICROSOFT_APP_ID,
-    appPassword: process.env.MICROSOFT_APP_PASSWORD
-    // appId: null,
-    // appPassword: null
+  appId: process.env.MICROSOFT_APP_ID,
+  appPassword: process.env.MICROSOFT_APP_PASSWORD
+  // appId: null,
+  // appPassword: null
 });
 var bot = new builder.UniversalBot(connector);
 server.post('/api/messages', connector.listen());
@@ -36,34 +36,34 @@ const pmkbClient = new PMKBClient(configs.get('PMKB_HOST'), configs.get('PMKB_US
 //=========================================================
 
 bot.dialog('start', function (session) {
-    session.send("Hi there!");
-    session.beginDialog('help');
+  session.send("Hi there!");
+  session.beginDialog('help');
 }).triggerAction({matches: /^hello/i});
 
 bot.dialog('/', [
-    function(session){
-        session.send(prompts.helpMessage),
-        builder.Prompts.choice(session, prompts.newSearchMessage, "Yes|No")
-    }]);
+  function (session) {
+    session.send(prompts.helpMessage),
+      builder.Prompts.choice(session, prompts.newSearchMessage, "Yes|No")
+  }]);
 
 bot.dialog('help', [
-    function(session){
-        session.send(prompts.helpMessage),
-        builder.Prompts.choice(session, prompts.newSearchMessage, "Yes|No")
-    },
-    function(session, results){
-         switch (results.response.index) {
-            case 0:
-                session.beginDialog('help');
-                break;
-            case 1:
-                session.beginDialog('start');
-                break;
-            default:
-                session.endDialog();
-                break;
+  function (session) {
+    session.send(prompts.helpMessage),
+      builder.Prompts.choice(session, prompts.newSearchMessage, "Yes|No")
+  },
+  function (session, results) {
+    switch (results.response.index) {
+      case 0:
+        session.beginDialog('help');
+        break;
+      case 1:
+        session.beginDialog('start');
+        break;
+      default:
+        session.endDialog();
+        break;
     }
-}]).triggerAction({matches: /^help/i});
+  }]).triggerAction({matches: /^help/i});
 
 bot.dialog('test', function (session) {
   pmkbClient.isAlive(function (err, isUp) {
