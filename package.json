@@ -20,6 +20,7 @@
   "dependencies": {
     "async": "^2.2.0",
     "botbuilder": "^3.7.0",
+    "nconf": "^0.8.4",
     "request": "^2.81.0",
     "restify": "^4.3.0"
   }

@@ -3,6 +3,7 @@ var builder = require('botbuilder');
 var prompts = require('./prompts');
 const PMKBClient = require('./lib/pmkbClient');
 const async = require('async');
+const configs = require('./config/configs');
 
 //=========================================================
 // Bot Setup
@@ -10,7 +11,7 @@ const async = require('async');
 
 // Setup Restify Server
 var server = restify.createServer();
-server.listen(process.env.port || process.env.PORT || 3978, function () {
+server.listen(configs.get('APPLICATION_PORT'), function () {
    console.log('%s listening to %s', server.name, server.url); 
 });
   
@@ -28,7 +29,7 @@ server.post('/api/messages', connector.listen());
 // bot.recognizer(recognizer);
 
 // Config PMKB Client
-const pmkbClient = new PMKBClient('http://pmkb-s.weill.cornell.edu', 'testuser', 'password');
+const pmkbClient = new PMKBClient(configs.get('PMKB_HOST'), configs.get('PMKB_USER'), configs.get('PMKB_PASS'));
 
 //=========================================================
 // Bots Dialogs
