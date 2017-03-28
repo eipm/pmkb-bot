@@ -25,8 +25,8 @@ var connector = new builder.ChatConnector({
 var bot = new builder.UniversalBot(connector);
 server.post('/api/messages', connector.listen());
 
-// var recognizer = new builder.LuisRecognizer('');
-// bot.recognizer(recognizer);
+var recognizer = new builder.LuisRecognizer('https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/9b2622c4-2a83-4f33-9fb0-e819ddb5f894?subscription-key=686d01692e8c47ec87bdc838e7e1a95f');
+bot.recognizer(recognizer);
 
 // Config PMKB Client
 const pmkbClient = new PMKBClient(configs.get('PMKB_HOST'), configs.get('PMKB_USER'), configs.get('PMKB_PASS'));
@@ -121,7 +121,7 @@ bot.dialog('find gene', [
       })
     })
   } 
-]).triggerAction({matches: /^find gene/});
+]).triggerAction({matches: "findGene"});
 
 bot.dialog('list genes', function (session) {
   pmkbClient.getGenes(function (err, genes) {
@@ -132,3 +132,40 @@ bot.dialog('list genes', function (session) {
     })
   })
 }).triggerAction({matches: /^genes/});
+
+
+
+var record = require('node-record-lpcm16')
+var fs = require('fs')
+
+bot.dialog('record',[
+  function(session){
+        builder.Prompts.choice(session, prompts.menuMsg, 'Record')
+    },
+    function(session, results){
+         switch (results.response.index) {
+            case 0:
+              async.waterfall([
+                function(callback){
+                  session.send("Recording");
+                  callback(null,null);
+                },
+                function(arg1, callback){
+                  startRecord(session);
+                }])
+              
+        }
+  }
+]).triggerAction({matches: /^record/i});
+
+function startRecord(session){
+
+  var file = fs.createWriteStream('test.wav', { encoding: 'binary' })
+
+  record.start({verbose: true}).pipe(file)
+
+  // Stop recording after three seconds and write to file
+  setTimeout(function () {
+    record.stop()
+  }, 3000)
+}
