@@ -17,3 +17,13 @@ npm install
 node app.js
 npm run startdev
 ```
+
+## Deployment using docker (In Progress)
+
+```bash
+docker run -d --name pmkb-bot \
+-p ${PORT}:3978 \
+-v ${PATH}:/usr/src/app \
+-w /usr/src/app \
+node:7.7.4
+```
