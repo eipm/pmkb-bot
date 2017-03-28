@@ -65,27 +65,30 @@ bot.dialog('newSearch', [
 bot.dialog('help', [
     function(session){
 
-        builder.Prompts.choice(session, prompts.menuMsg, 'Gene|Variant|Interpretation|Exit')
+        builder.Prompts.choice(session, prompts.menuMsg, 'Gene|Variant|Primary Site|Tumor Type|Exit')
     },
     function(session, results){
          switch (results.response.index) {
             case 0:
-                // session.beginDialog('help');
                 session.sendTyping();
                 session.beginDialog('find gene');
-                // session.beginDialog('newSearch');
                 break;
             case 1:
-                // session.beginDialog('start');
+                session.sendTyping();
                 session.send('Searching Variant...');
                 session.beginDialog('newSearch');
                 break;
             case 2:
-                // session.beginDialog('start');
-                session.send('Searching Interpretation...');
+                session.sendTyping();
+                session.send('Searching Primary Site ...');
                 session.beginDialog('newSearch');
                 break;
             case 3:
+                session.sendTyping();
+                session.send('Searching Tumor Type ...');
+                session.beginDialog('newSearch');
+                break;
+            case 4:
                 session.send(prompts.exitMsg);
                 session.endDialog();
                 break;
@@ -129,4 +132,3 @@ bot.dialog('list genes', function (session) {
     })
   })
 }).triggerAction({matches: /^genes/});
-
