@@ -17,10 +17,10 @@ server.listen(configs.get('APPLICATION_PORT'), function () {
 
 // Create chat bot
 var connector = new builder.ChatConnector({
-  appId: process.env.MICROSOFT_APP_ID,
-  appPassword: process.env.MICROSOFT_APP_PASSWORD
-  // appId: null,
-  // appPassword: null
+  // appId: process.env.MICROSOFT_APP_ID,
+  // appPassword: process.env.MICROSOFT_APP_PASSWORD
+  appId: null,
+  appPassword: null
 });
 var bot = new builder.UniversalBot(connector);
 server.post('/api/messages', connector.listen());
@@ -35,38 +35,66 @@ const pmkbClient = new PMKBClient(configs.get('PMKB_HOST'), configs.get('PMKB_US
 // Bots Dialogs
 //=========================================================
 
-bot.dialog('start', function (session) {
-  session.send("Hi there!");
+bot.dialog('/', function (session) {
+  session.send(prompts.greetMsg);
+  session.send(prompts.helpMsg),
+  session.send(prompts.disclaimerMsg),
   session.beginDialog('help');
-}).triggerAction({matches: /^hello/i});
+}).triggerAction({matches: /(^hello)|(^hi)/i});
 
-bot.dialog('/', [
-  function (session) {
-    session.send(prompts.helpMessage),
-      builder.Prompts.choice(session, prompts.newSearchMessage, "Yes|No")
-  }]);
+bot.dialog('newSearch', [
+    function(session){
+        builder.Prompts.choice(session, prompts.newSearchMsg, 'Yes|No')
+    },
+    function(session, results){
+        switch (results.response.index) {
+            case 0:
+                session.beginDialog('help');
+                break;
+            case 1:
+                session.send(prompts.exitMsg);
+                session.endDialog();
+                break;
+            default:
+                session.send(prompts.exitMsg);
+                session.endDialog();
+                break;
+        }
+    }]);
 
 bot.dialog('help', [
-  function (session) {
-    session.send(prompts.helpMessage),
-      builder.Prompts.choice(session, prompts.newSearchMessage, "Yes|No|Search Genes", {listStyle: 3})
-  },
-  function (session, results) {
-    switch (results.response.index) {
-      case 0:
-        session.beginDialog('help');
-        break;
-      case 1:
-        session.beginDialog('start');
-        break;
-      case 2:
-        session.beginDialog('find gene');
-        break;
-      default:
-        session.endDialog();
-        break;
+    function(session){
+
+        builder.Prompts.choice(session, prompts.menuMsg, 'Gene|Variant|Interpretation|Exit')
+    },
+    function(session, results){
+         switch (results.response.index) {
+            case 0:
+                // session.beginDialog('help');
+                session.sendTyping();
+                session.beginDialog('find gene');
+                // session.beginDialog('newSearch');
+                break;
+            case 1:
+                // session.beginDialog('start');
+                session.send('Searching Variant...');
+                session.beginDialog('newSearch');
+                break;
+            case 2:
+                // session.beginDialog('start');
+                session.send('Searching Interpretation...');
+                session.beginDialog('newSearch');
+                break;
+            case 3:
+                session.send(prompts.exitMsg);
+                session.endDialog();
+                break;
+            default:
+                session.send(prompts.exitMsg);
+                session.endDialog();
+                break;
     }
-  }]).triggerAction({matches: /^help/i});
+}]).triggerAction({matches: /^help/i});
 
 bot.dialog('test', function (session) {
   pmkbClient.isAlive(function (err, isUp) {
@@ -85,11 +113,11 @@ bot.dialog('find gene', [
       async.filter(genes, function (gene, cb) {
         cb(null, gene.name === geneName)  //TODO: match via regex
       }, function (err, res) {
-        session.endDialog(res.length && res[0].name || ('Gene' + geneName + ' does not exist'));
+        session.endDialog(res.length && res[0].name || ('Gene ' + geneName + ' does not exist'));
         // TODO: Find all interpretations for this gene
       })
     })
-  }
+  } 
 ]).triggerAction({matches: /^find gene/});
 
 bot.dialog('list genes', function (session) {
