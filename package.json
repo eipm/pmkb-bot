@@ -12,7 +12,7 @@
     "url": "git+https://github.com/ElementoLab/pmkb-hackfest.git"
   },
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/ElementoLab/pmkb-hackfest/issues"
   },
