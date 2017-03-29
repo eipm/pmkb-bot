@@ -31,23 +31,23 @@ var recognizer = new builder.LuisRecognizer('https://westus.api.cognitive.micros
 bot.recognizer(recognizer);
 
 // Config PMKB Client
-const pmkbClient = new PMKBClient(configs.get('PMKB_HOST'), configs.get('PMKB_USER'), configs.get('PMKB_PASS'));
+const pmkbClient = new PMKBClient(process.env.PMKB_HOST, process.env.PMKB_USER, process.env.PMKB_PASS);
 
 //=========================================================
 // Bots Dialogs
 //=========================================================
-bot.on('conversationUpdate', function (message) {
-    if (message.membersAdded) {
-        message.membersAdded.forEach(function (identity) {
-            if (identity.id === message.address.bot.id) {
-                var reply = new builder.Message()
-                    .address(message.address)
-                    .text('Hi! I am SpeechToText Bot. I can understand the content of any audio and convert it to text. Try sending me a wav file.');
-                bot.send(reply);
-            }
-        });
-    }
-});
+// bot.on('conversationUpdate', function (message) {
+//     if (message.membersAdded) {
+//         message.membersAdded.forEach(function (identity) {
+//             if (identity.id === message.address.bot.id) {
+//                 var reply = new builder.Message()
+//                     .address(message.address)
+//                     .text('Hi! I am SpeechToText Bot. I can understand the content of any audio and convert it to text. Try sending me a wav file.');
+//                 bot.send(reply);
+//             }
+//         });
+//     }
+// });
 
 bot.dialog('/', function (session) {
   session.send(prompts.greetMsg);
