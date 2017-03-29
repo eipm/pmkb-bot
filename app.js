@@ -34,6 +34,18 @@ const pmkbClient = new PMKBClient(configs.get('PMKB_HOST'), configs.get('PMKB_US
 //=========================================================
 // Bots Dialogs
 //=========================================================
+bot.on('conversationUpdate', function (message) {
+    if (message.membersAdded) {
+        message.membersAdded.forEach(function (identity) {
+            if (identity.id === message.address.bot.id) {
+                var reply = new builder.Message()
+                    .address(message.address)
+                    .text('Hi! I am SpeechToText Bot. I can understand the content of any audio and convert it to text. Try sending me a wav file.');
+                bot.send(reply);
+            }
+        });
+    }
+});
 
 bot.dialog('/', function (session) {
   session.send(prompts.greetMsg);
@@ -140,32 +152,76 @@ var fs = require('fs')
 
 bot.dialog('record',[
   function(session){
-        builder.Prompts.choice(session, prompts.menuMsg, 'Record')
+        builder.Prompts.choice(session, prompts.menuMsg, 'Record', {liststyle:3});
     },
     function(session, results){
          switch (results.response.index) {
             case 0:
-              async.waterfall([
-                function(callback){
-                  session.send("Recording");
-                  callback(null,null);
-                },
-                function(arg1, callback){
-                  startRecord(session);
-                }])
+              session.beginDialog('doRecording');
               
         }
+    
   }
 ]).triggerAction({matches: /^record/i});
 
-function startRecord(session){
-  const exec = require('child_process').exec;
-  const child = exec('sox -t waveaudio default new.wav trim 0 10',
-      (error, stdout, stderr) => {
-          console.log(`stdout: ${stdout}`);
-          console.log(`stderr: ${stderr}`);
-          if (error !== null) {
-              console.log(`exec error: ${error}`);
-          }
-  });
+bot.dialog('doRecording', [
+  function(session){
+    session.send("Recording");
+    const exec = require('child_process').exec;
+    const child = exec('sox -t waveaudio default new.wav trim 0 4',
+          (error, stdout, stderr) => {
+              console.log(`stdout: ${stdout}`);
+              console.log(`stderr: ${stderr}`);
+              if (error !== null) {
+                  console.log(`exec error: ${error}`);
+              }
+              session.send("IM HEREEEE");
+              session.beginDialog("thinking");
+    });
+   
+  }
+]);
+
+
+speechService = require('./speechservice.js');
+
+var client = require('./lib/client');
+
+bot.dialog('thinking',[
+  function(session){
+    var bing = new client.BingSpeechClient('148c262df6f7418fbcca86479848f61a');
+    var results = '';
+    var wave = fs.readFileSync('./new.wav');
+
+    const text = bing.recognize(wave).then(result => {
+      console.log('Speech To Text completed');
+      console.log(result.header.lexical)
+      console.log('\n');
+      session.send(result.header.lexical)
+    });
+    }]
+
+
+).triggerAction({matches:/^thinking/i});
+
+
+function processText(text) {
+    var result = 'You said: ' + text + '.';
+
+    if (text && text.length > 0) {
+        var wordCount = text.split(' ').filter(function (x) { return x; }).length;
+        result += '\n\nWord Count: ' + wordCount;
+
+        var characterCount = text.replace(/ /g, '').length;
+        result += '\n\nCharacter Count: ' + characterCount;
+
+        var spaceCount = text.split(' ').length - 1;
+        result += '\n\nSpace Count: ' + spaceCount;
+
+        var m = text.match(/[aeiou]/gi);
+        var vowelCount = m === null ? 0 : m.length;
+        result += '\n\nVowel Count: ' + vowelCount;
+    }
+
+    return result;
 }
