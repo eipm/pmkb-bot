@@ -39,3 +39,5 @@ jspm_packages
 # JetBrains
 .idea/
 
+#config files
+config

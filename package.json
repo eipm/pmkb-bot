@@ -5,8 +5,7 @@
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "startdev": "node app.js"
-  },
+  "startdev": "node-dev ./bin/server.js"  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ElementoLab/pmkb-hackfest.git"
@@ -22,6 +21,7 @@
     "botbuilder": "^3.7.0",
     "nconf": "^0.8.4",
     "request": "^2.81.0",
-    "restify": "^4.3.0"
+    "restify": "^4.3.0",
+    "node-dev": "^3.1.3"
   }
 }
