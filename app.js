@@ -145,9 +145,6 @@ bot.dialog('list genes', function (session) {
   })
 }).triggerAction({matches: /^genes/});
 
-
-
-var record = require('node-record-lpcm16')
 var fs = require('fs')
 
 bot.dialog('record',[
@@ -181,9 +178,6 @@ bot.dialog('doRecording', [
    
   }
 ]);
-
-
-speechService = require('./speechservice.js');
 
 var client = require('./lib/client');
 
