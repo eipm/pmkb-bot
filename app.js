@@ -159,13 +159,13 @@ bot.dialog('record',[
 ]).triggerAction({matches: /^record/i});
 
 function startRecord(session){
-
-  var file = fs.createWriteStream('test.wav', { encoding: 'binary' })
-
-  record.start({verbose: true}).pipe(file)
-
-  // Stop recording after three seconds and write to file
-  setTimeout(function () {
-    record.stop()
-  }, 3000)
+  const exec = require('child_process').exec;
+  const child = exec('sox -t waveaudio default new.wav trim 0 10',
+      (error, stdout, stderr) => {
+          console.log(`stdout: ${stdout}`);
+          console.log(`stderr: ${stderr}`);
+          if (error !== null) {
+              console.log(`exec error: ${error}`);
+          }
+  });
 }
