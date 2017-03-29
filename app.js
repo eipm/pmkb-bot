@@ -25,7 +25,7 @@ var connector = new builder.ChatConnector({
 var bot = new builder.UniversalBot(connector);
 server.post('/api/messages', connector.listen());
 
-var recognizer = new builder.LuisRecognizer('https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/9b2622c4-2a83-4f33-9fb0-e819ddb5f894?subscription-key=686d01692e8c47ec87bdc838e7e1a95f');
+var recognizer = new builder.LuisRecognizer('https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/40854c2f-ef7d-4b0a-9b8c-2423255f02d0?subscription-key=686d01692e8c47ec87bdc838e7e1a95f');
 bot.recognizer(recognizer);
 
 // Config PMKB Client
@@ -34,18 +34,18 @@ const pmkbClient = new PMKBClient(configs.get('PMKB_HOST'), configs.get('PMKB_US
 //=========================================================
 // Bots Dialogs
 //=========================================================
-// bot.on('conversationUpdate', function (message) {
-//     if (message.membersAdded) {
-//         message.membersAdded.forEach(function (identity) {
-//             if (identity.id === message.address.bot.id) {
-//                 var reply = new builder.Message()
-//                     .address(message.address)
-//                     .text('Hi! I am SpeechToText Bot. I can understand the content of any audio and convert it to text. Try sending me a wav file.');
-//                 bot.send(reply);
-//             }
-//         });
-//     }
-// });
+bot.on('conversationUpdate', function (message) {
+    if (message.membersAdded) {
+        message.membersAdded.forEach(function (identity) {
+            if (identity.id === message.address.bot.id) {
+                var reply = new builder.Message()
+                    .address(message.address)
+                    .text('Hi! I am SpeechToText Bot. I can understand the content of any audio and convert it to text. Try sending me a wav file.');
+                bot.send(reply);
+            }
+        });
+    }
+});
 
 bot.dialog('/', function (session) {
   session.send(prompts.greetMsg);
@@ -145,6 +145,9 @@ bot.dialog('list genes', function (session) {
   })
 }).triggerAction({matches: /^genes/});
 
+
+
+var record = require('node-record-lpcm16')
 var fs = require('fs')
 
 bot.dialog('record',[
@@ -178,6 +181,9 @@ bot.dialog('doRecording', [
    
   }
 ]);
+
+
+speechService = require('./speechservice.js');
 
 var client = require('./lib/client');
 
