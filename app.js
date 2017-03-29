@@ -4,6 +4,8 @@ var prompts = require('./prompts');
 const PMKBClient = require('./lib/pmkbClient');
 const async = require('async');
 const configs = require('./config/configs');
+var fs = require('fs');
+var client = require('./lib/client');
 
 //=========================================================
 // Bot Setup
@@ -147,9 +149,6 @@ bot.dialog('list genes', function (session) {
 
 
 
-var record = require('node-record-lpcm16')
-var fs = require('fs')
-
 bot.dialog('record',[
   function(session){
         builder.Prompts.choice(session, prompts.menuMsg, 'Record', {liststyle:3});
@@ -182,11 +181,6 @@ bot.dialog('doRecording', [
   }
 ]);
 
-
-speechService = require('./speechservice.js');
-
-var client = require('./lib/client');
-
 bot.dialog('thinking',[
   function(session){
     var bing = new client.BingSpeechClient('148c262df6f7418fbcca86479848f61a');
@@ -203,25 +197,3 @@ bot.dialog('thinking',[
 
 
 ).triggerAction({matches:/^thinking/i});
-
-
-function processText(text) {
-    var result = 'You said: ' + text + '.';
-
-    if (text && text.length > 0) {
-        var wordCount = text.split(' ').filter(function (x) { return x; }).length;
-        result += '\n\nWord Count: ' + wordCount;
-
-        var characterCount = text.replace(/ /g, '').length;
-        result += '\n\nCharacter Count: ' + characterCount;
-
-        var spaceCount = text.split(' ').length - 1;
-        result += '\n\nSpace Count: ' + spaceCount;
-
-        var m = text.match(/[aeiou]/gi);
-        var vowelCount = m === null ? 0 : m.length;
-        result += '\n\nVowel Count: ' + vowelCount;
-    }
-
-    return result;
-}
