@@ -89,7 +89,8 @@ bot.dialog('getStarted', [
                         builder.CardImage.create(session, "https://pbs.twimg.com/profile_banners/759029706360578048/1469801979/1500x500")
                     ])
                     .buttons([
-                        builder.CardAction.imBack(session, "examples", 'Show me Examples')
+                        builder.CardAction.imBack(session, "examples", 'Show me Examples'),
+                         builder.CardAction.imBack(session, "record", 'Say it')
                     ])
                     .tap(builder.CardAction.openUrl(session, url))
             ]);
@@ -220,24 +221,11 @@ bot.dialog('list genes', function (session) {
   })
 }).triggerAction({matches: /^genes/});
 
-bot.dialog('record',[
-  function(session){
-      builder.Prompts.choice(session, "", "Record")
- 
-    },
-    function(session, results){
-         switch (results.response.index) {
-            case 0:
-              session.beginDialog('doRecording');     
-        }
-  }
-]).triggerAction({matches: /^record/i});
-
-bot.dialog('doRecording', [
+bot.dialog('startRecording', [
   function(session){
     session.send("Recording");
     const exec = require('child_process').exec;
-    const child = exec('sox -t waveaudio default new.wav trim 0 4',
+    const child = exec('sox -t waveaudio default new.wav trim 0 6',
           (error, stdout, stderr) => {
               console.log(`stdout: ${stdout}`);
               console.log(`stderr: ${stderr}`);
@@ -247,7 +235,7 @@ bot.dialog('doRecording', [
               session.beginDialog("thinking");
     });
   }
-]);
+]).triggerAction({matches:/(^record)/i});
 
 bot.dialog('thinking',[
   function(session){
@@ -294,7 +282,8 @@ function makeQuery(luisResults, callback) {
 }
 
 function makeInterpretationCards(interpretations, session, mainGene, callback) {
-  const interpretationUrlBase = pmkbClient.host + '/therapies/';
+//   const interpretationUrlBase = pmkbClient.host + '/therapies/';
+  const interpretationUrlBase = "https://pmkb.weill.cornell.edu" + '/therapies/';
   mainGene = mainGene.toUpperCase();
   let parts = _.partition(interpretations, (i) => i.gene.name === mainGene);
   interpretations = parts[0].concat(parts[1]);  //Place most relevant genes first
@@ -379,7 +368,7 @@ function createThumbnailCard(session, text) {
         
         .buttons([
             builder.CardAction.imBack(session, text, 'Yes'),
-            builder.CardAction.imBack(session, "BYE", 'No'),
-
+            builder.CardAction.imBack(session, "record", 'Try again'),
+            builder.CardAction.imBack(session, "bye", 'No'),
         ]);
 }
