@@ -52,7 +52,7 @@ bot.on('conversationUpdate', function (message) {
           .text(prompts.disclaimerMsg);
         bot.send(greeting);
         bot.send(help);
-        bot.send(disclaimer);
+        bot.beginDialog(message.address, '*:disclaimer')
       }
     });
   }
@@ -146,34 +146,47 @@ bot.dialog('thinking',[
 
 bot.dialog('about', [
     function (session) {
-
-        var result = "BRAF"
-        var interpretation = "BRAF is ..."
-
-        function randomIntInc (low, high) {
-            return Math.floor(Math.random() * (high - low + 1) + low);
-        }
-        image = randomIntInc(1,6)
-        url = "https://pmkb.weill.cornell.edu"
-
+        var url = "https://pmkb.weill.cornell.edu"
         var msg = new builder.Message(session)
             .textFormat(builder.TextFormat.xml)
             .attachments([
                 new builder.HeroCard(session)
                     .title("PMKB Bot")
-                    .subtitle("About: " + result + ' ' + image)
-                    .text(interpretation)
+                    .subtitle("About:")
+                    .text(prompts.helpMsg)
                     .images([
                         builder.CardImage.create(session, "https://pbs.twimg.com/profile_banners/759029706360578048/1469801979/1500x500")
                     ])
                     .buttons([
-                        builder.CardAction.openUrl(session, url, 'Read more')
+                        builder.CardAction.openUrl(session, url, 'Visit Website')
                     ])
                     .tap(builder.CardAction.openUrl(session, url))
             ]);
         session.endDialog(msg);
     }
 ]).triggerAction({matches:/^about/i});
+
+bot.dialog('disclaimer', [
+    function (session) {
+        var url = "https://pmkb.weill.cornell.edu"
+        var msg = new builder.Message(session)
+            .textFormat(builder.TextFormat.xml)
+            .attachments([
+                new builder.HeroCard(session)
+                    .title("Disclaimer")
+                    .subtitle("PMKB Bot")
+                    .text(prompts.disclaimerMsg)
+                    .images([
+                        builder.CardImage.create(session, "https://pbs.twimg.com/profile_banners/759029706360578048/1469801979/1500x500")
+                    ])
+                    .buttons([
+                        builder.CardAction.openUrl(session, url, 'Visit Website')
+                    ])
+                    .tap(builder.CardAction.openUrl(session, url))
+            ]);
+        session.endDialog(msg);
+    }
+]).triggerAction({matches:/^disclaimer/i});
 
 //=====================
 // Helper functions
