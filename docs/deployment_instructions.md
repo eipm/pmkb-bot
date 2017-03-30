@@ -58,7 +58,7 @@ Where:
 ```bash
 docker run -d --name pmkb-bot \
 -p 5000:3978 \
---env-file /Users/alex/Code/2.Github/pmkb-hackfest/docker.env
+--env-file /Users/alex/Code/2.Github/pmkb-hackfest/docker.env \
 -v /Users/alex/Code/2.Github/pmkb-hackfest:/usr/src/app \
 -w /usr/src/app \
 node:7.7.4 npm start
