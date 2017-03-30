@@ -71,12 +71,12 @@ bot.dialog('find gene',
     makeQuery(luisResults, function (err, query) {
       if (err)
         return session.endDialog(err.message);
-      pmkbClient.searchInterpretations(query, function (err, interpretations) {
+      pmkbClient.searchInterpretations(query.value, function (err, interpretations) {
         if (err)
           return session.send(err.message);
-        makeInterpretationCards(interpretations, session, query, function (err, cards) {
+        makeInterpretationCards(interpretations, session, query.gene, function (err, cards) {
           let reply = new builder.Message(session)
-            .text('Found ' + interpretations.length + ' interpretations for ' + query)
+            .text('Found ' + interpretations.length + ' interpretations for ' + query.value)
             .attachmentLayout(builder.AttachmentLayout.carousel)
             .attachments(cards);
           session.endDialog(reply);
@@ -192,27 +192,41 @@ function makeQuery(luisResults, callback) {
   if (!geneName) return callback(new Error('Cannot make a query for interpretations without a gene name'));
   let query = geneName;
   if (mutation) query += ' ' + mutation;
-  return callback(null, query);
+  return callback(null, {
+    value: query,
+    gene: geneName,
+    mutation: mutation
+  });
 }
 
-function makeInterpretationCards(interpretations, session, query, callback) {
-  url = "https://pmkb.weill.cornell.edu/search?utf8=✓&search=" + query.replace(/ /g, '+')
+function makeInterpretationCards(interpretations, session, mainGene, callback) {
+  const interpretationUrlBase = pmkbClient.host + '/therapies/';
+  mainGene = mainGene.toUpperCase();
+  let parts = _.partition(interpretations, (i) => i.gene.name === mainGene);
+  interpretations = parts[0].concat(parts[1]);  //Place most relevant genes first
   const cards = _.map(interpretations, function (i) {
+    const interpretationUrl = interpretationUrlBase + i.id;
+    const title = 'Interpretation for ' +  i.gene.name;
+    const getNames = (objs) => _.map(objs, (obj) => obj.name);
+    const subtitle = 'Tumors({tumors}) Tissues({tissues}) Variants({variants})'
+      .replace('{tumors}', getNames(i.tumors))
+      .replace('{tissues}', getNames(i.tissues))
+      .replace('{variants}', getNames(i.variants));
     return new builder.HeroCard(session)
-                .title(query.toUpperCase())
-                .subtitle("Interpretation: ")
-                .text(i.interpretation)
-                .images([
-                        builder.CardImage.create(session,  __dirname + "/assets/cards/" + randomIntInc(1,6)+".png")
-                ])
-                .buttons([
-                  builder.CardAction.openUrl(session, url, 'Read more')
-                ])
-                .tap(builder.CardAction.openUrl(session, url));
+      .title(title)
+      .subtitle(subtitle)
+      .text(i.interpretation)
+      .images([
+        builder.CardImage.create(session, __dirname + "/assets/cards/" + randomIntInc(1, 6) + ".png")
+      ])
+      .buttons([
+        builder.CardAction.openUrl(session, interpretationUrl, 'Read more')
+      ])
+      .tap(builder.CardAction.openUrl(session, interpretationUrl));
   });
   callback(null, cards);
 }
 
-function randomIntInc (low, high) {
+function randomIntInc(low, high) {
   return Math.floor(Math.random() * (high - low + 1) + low);
 }
