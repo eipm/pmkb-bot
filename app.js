@@ -37,6 +37,8 @@ const pmkbClient = new PMKBClient(process.env.PMKB_HOST, process.env.PMKB_USER, 
 //=========================================================
 // Bots Dialogs
 //=========================================================
+
+// Executed when conversation starts.
 bot.on('conversationUpdate', function (message) {
   if (message.membersAdded) {
     message.membersAdded.forEach(function (identity) {
@@ -44,19 +46,171 @@ bot.on('conversationUpdate', function (message) {
         const greeting = new builder.Message()
           .address(message.address)
           .text(prompts.greetMsg);
-        const help = new builder.Message()
-          .address(message.address)
-          .text(prompts.helpMsg);
-        const disclaimer = new builder.Message()
-          .address(message.address)
-          .text(prompts.disclaimerMsg);
         bot.send(greeting);
-        bot.send(help);
-        bot.send(disclaimer);
+        bot.beginDialog(message.address, '*:disclaimerStart');
       }
     });
   }
 });
+
+// // Disclaimer message
+// bot.dialog('disclaimer', [
+//     function (session) {
+//         var url = "https://pmkb.weill.cornell.edu"
+//         var msg = new builder.Message(session)
+//             .textFormat(builder.TextFormat.xml)
+//             .attachments([
+//                 new builder.HeroCard(session)
+//                     .title("Disclaimer")
+//                     .subtitle("PMKB Bot")
+//                     .text(prompts.disclaimerMsg)
+//                     .images([
+//                         builder.CardImage.create(session, "https://pbs.twimg.com/profile_banners/759029706360578048/1469801979/1500x500")
+//                     ])
+//                     .buttons([
+//                         builder.CardAction.openUrl(session, url, 'Visit Website')
+//                     ])
+//                     .tap(builder.CardAction.openUrl(session, url))
+//             ]);
+//         session.endDialog(msg);
+//     }
+// ]).triggerAction({matches:/^disclaimer/i});
+
+// Disclaimer message
+bot.dialog('disclaimerStart', [
+    function (session) {
+        var url = "https://pmkb.weill.cornell.edu"
+        var msg = new builder.Message(session)
+            .textFormat(builder.TextFormat.markdown)
+            .attachments([
+                new builder.ThumbnailCard(session)
+                    .title("Disclaimer")
+                    .subtitle("PMKB Bot")
+                    .text(prompts.disclaimerMsg)
+                    .images([
+                        builder.CardImage.create(session, "http://ipm.weill.cornell.edu/sites/default/files/logo_englander_2line_rgb_comp_1.jpg")
+                    ])
+                    .buttons([
+                        builder.CardAction.openUrl(session, url, 'Visit Website')
+                    ])
+                    .tap(builder.CardAction.openUrl(session, url))
+            ]);
+            session.send(msg);
+        session.beginDialog('getStarted');
+    }
+]);
+
+// Getting Started Dialog.
+bot.dialog('getStarted', [
+    function (session) {
+        var url = "https://pmkb.weill.cornell.edu"
+        var msg = new builder.Message(session)
+            .textFormat(builder.TextFormat.xml)
+            .attachments([
+                new builder.HeroCard(session)
+                    .title("PMKB Bot")
+                    .subtitle("Getting Started")
+                    .text(prompts.gettingStartedMsg)
+                    .images([
+                        builder.CardImage.create(session, "https://pbs.twimg.com/profile_banners/759029706360578048/1469801979/1500x500")
+                    ])
+                    .buttons([
+                        builder.CardAction.imBack(session, "examples", 'Show me Examples')
+                    ])
+                    .tap(builder.CardAction.openUrl(session, url))
+            ]);
+        session.endDialog(msg);
+    }
+]);
+
+// Examples Dialog.
+bot.dialog('examples', [
+    function (session) {
+        var url = "https://pmkb.weill.cornell.edu"
+        var msg = new builder.Message(session)
+            .textFormat(builder.TextFormat.xml)
+            .attachments([
+                new builder.HeroCard(session)
+                    .title("PMKB Bot")
+                    .subtitle("Examples")
+                    .text(prompts.gettingStartedMsg)
+                    .images([
+                        builder.CardImage.create(session, "https://pbs.twimg.com/profile_banners/759029706360578048/1469801979/1500x500")
+                    ])
+                    .buttons([
+                        builder.CardAction.imBack(session, "examples", 'Show me Examples')
+                    ])
+                    .tap(builder.CardAction.openUrl(session, url))
+            ]);
+        // session.endDialog(msg);
+
+        var exampleCards = getExampleCardsAttachments();
+        var reply = new builder.Message(session)
+        .text('Examples')
+        .attachmentLayout(builder.AttachmentLayout.carousel)
+        .attachments(exampleCards);
+
+        session.endDialog(reply);
+    }
+]).triggerAction({matches:/(^examples)|(^help)/i});
+
+// Disclaimer message
+bot.dialog('disclaimer', [
+    function (session) {
+        var url = "https://pmkb.weill.cornell.edu"
+        var msg = new builder.Message(session)
+            .textFormat(builder.TextFormat.markdown)
+            .attachments([
+                new builder.ThumbnailCard(session)
+                    .title("Disclaimer")
+                    .subtitle("PMKB Bot")
+                    .text(prompts.disclaimerMsg)
+                    .images([
+                        builder.CardImage.create(session, "http://ipm.weill.cornell.edu/sites/default/files/logo_englander_2line_rgb_comp_1.jpg")
+                    ])
+                    .buttons([
+                        builder.CardAction.openUrl(session, url, 'Visit Website')
+                    ])
+                    .tap(builder.CardAction.openUrl(session, url))
+            ]);
+        session.endDialog(msg);
+    }
+]).triggerAction({matches:/^disclaimer/i});
+
+// About Dialog.
+bot.dialog('about', [
+    function (session) {
+        var url = "https://pmkb.weill.cornell.edu"
+        var msg = new builder.Message(session)
+            .textFormat(builder.TextFormat.xml)
+            .attachments([
+                new builder.HeroCard(session)
+                    .title("PMKB Bot")
+                    .subtitle("About")
+                    .text(prompts.gettingStartedMsg)
+                    .images([
+                        builder.CardImage.create(session, "https://pbs.twimg.com/profile_banners/759029706360578048/1469801979/1500x500")
+                    ])
+                    .buttons([
+                        builder.CardAction.openUrl(session, url, 'Visit Website')
+                    ])
+                    .tap(builder.CardAction.openUrl(session, url))
+            ]);
+        session.endDialog(msg);
+    }
+]).triggerAction({matches:/^about/i});
+
+
+// Exit Dialog.
+bot.dialog('exit', [
+    function (session) {
+        session.endDialog(prompts.exitMsg);
+    }
+]).triggerAction({matches:/^bye/i});
+
+
+
+//////
 
 bot.dialog('test', function (session) {
   pmkbClient.isAlive(function (err, isUp) {
@@ -123,7 +277,6 @@ bot.dialog('doRecording', [
               session.send("IM HEREEEE");
               session.beginDialog("thinking");
     });
-   
   }
 ]);
 
@@ -143,37 +296,6 @@ bot.dialog('thinking',[
 
 
 ).triggerAction({matches:/^thinking/i});
-
-bot.dialog('about', [
-    function (session) {
-
-        var result = "BRAF"
-        var interpretation = "BRAF is ..."
-
-        function randomIntInc (low, high) {
-            return Math.floor(Math.random() * (high - low + 1) + low);
-        }
-        image = randomIntInc(1,6)
-        url = "https://pmkb.weill.cornell.edu"
-
-        var msg = new builder.Message(session)
-            .textFormat(builder.TextFormat.xml)
-            .attachments([
-                new builder.HeroCard(session)
-                    .title("PMKB Bot")
-                    .subtitle("About: " + result + ' ' + image)
-                    .text(interpretation)
-                    .images([
-                        builder.CardImage.create(session, "https://pbs.twimg.com/profile_banners/759029706360578048/1469801979/1500x500")
-                    ])
-                    .buttons([
-                        builder.CardAction.openUrl(session, url, 'Read more')
-                    ])
-                    .tap(builder.CardAction.openUrl(session, url))
-            ]);
-        session.endDialog(msg);
-    }
-]).triggerAction({matches:/^about/i});
 
 //=====================
 // Helper functions
@@ -229,4 +351,52 @@ function makeInterpretationCards(interpretations, session, mainGene, callback) {
 
 function randomIntInc(low, high) {
   return Math.floor(Math.random() * (high - low + 1) + low);
+}
+
+function getExampleCardsAttachments(session) {
+    return [
+        new builder.HeroCard(session)
+            .title('Find EGFR')
+            // .subtitle('Offload the heavy lifting of data center management')
+            // .text('Store and help protect your data. Get durable, highly available data storage across the globe and pay only for what you use.')
+            .images([
+                builder.CardImage.create(session, __dirname + "/assets/cards/" + randomIntInc(1,6)+".png")
+            ])
+            .buttons([
+                builder.CardAction.imBack(session, "Find EGFR", 'Try It')
+            ]),
+
+        new builder.HeroCard(session)
+            .title('Find BRAF V600E')
+            // .subtitle('Blazing fast, planet-scale NoSQL')
+            // .text('NoSQL service for highly available, globally distributed apps—take full advantage of SQL and JavaScript over document and key-value data without the hassles of on-premises or virtual machine-based cloud database options.')
+            .images([
+                builder.CardImage.create(session, __dirname + "/assets/cards/" + randomIntInc(1,6)+".png")
+            ])
+            .buttons([
+                builder.CardAction.imBack(session, "Find BRAF V600E", 'Try It')
+            ]),
+
+        new builder.HeroCard(session)
+            .title('Find prostate cancer')
+            // .subtitle('Process events with a serverless code architecture')
+            // .text('An event-based serverless compute experience to accelerate your development. It can scale based on demand and you pay only for the resources you consume.')
+            .images([
+                builder.CardImage.create(session, __dirname + "/assets/cards/" + randomIntInc(1,6)+".png")
+            ])
+            .buttons([
+                builder.CardAction.imBack(session, "Find prostate cancer", 'Try It')
+            ]),
+
+        new builder.HeroCard(session)
+            .title('Find BRAF')
+            // .subtitle('Build powerful intelligence into your applications to enable natural and contextual interactions')
+            // .text('Enable natural and contextual interaction with tools that augment users\' experiences using the power of machine-based intelligence. Tap into an ever-growing collection of powerful artificial intelligence algorithms for vision, speech, language, and knowledge.')
+            .images([
+                builder.CardImage.create(session, __dirname + "/assets/cards/" + randomIntInc(1,6)+".png")
+            ])
+            .buttons([
+                builder.CardAction.imBack(session, "Find BRAF", 'Try It')
+            ])
+    ];
 }
