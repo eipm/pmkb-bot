@@ -37,6 +37,8 @@ const pmkbClient = new PMKBClient(process.env.PMKB_HOST, process.env.PMKB_USER, 
 //=========================================================
 // Bots Dialogs
 //=========================================================
+
+// Executed when conversation starts.
 bot.on('conversationUpdate', function (message) {
   if (message.membersAdded) {
     message.membersAdded.forEach(function (identity) {
@@ -57,6 +59,54 @@ bot.on('conversationUpdate', function (message) {
     });
   }
 });
+
+// Disclaimer message
+bot.dialog('disclaimer', [
+    function (session) {
+        var url = "https://pmkb.weill.cornell.edu"
+        var msg = new builder.Message(session)
+            .textFormat(builder.TextFormat.xml)
+            .attachments([
+                new builder.HeroCard(session)
+                    .title("Disclaimer")
+                    .subtitle("PMKB Bot")
+                    .text(prompts.disclaimerMsg)
+                    .images([
+                        builder.CardImage.create(session, "https://pbs.twimg.com/profile_banners/759029706360578048/1469801979/1500x500")
+                    ])
+                    .buttons([
+                        builder.CardAction.openUrl(session, url, 'Visit Website')
+                    ])
+                    .tap(builder.CardAction.openUrl(session, url))
+            ]);
+        session.endDialog(msg);
+    }
+]).triggerAction({matches:/^disclaimer/i});
+
+// About Dialog.
+bot.dialog('about', [
+    function (session) {
+        var url = "https://pmkb.weill.cornell.edu"
+        var msg = new builder.Message(session)
+            .textFormat(builder.TextFormat.xml)
+            .attachments([
+                new builder.HeroCard(session)
+                    .title("PMKB Bot")
+                    .subtitle("About:")
+                    .text(prompts.helpMsg)
+                    .images([
+                        builder.CardImage.create(session, "https://pbs.twimg.com/profile_banners/759029706360578048/1469801979/1500x500")
+                    ])
+                    .buttons([
+                        builder.CardAction.openUrl(session, url, 'Visit Website')
+                    ])
+                    .tap(builder.CardAction.openUrl(session, url))
+            ]);
+        session.endDialog(msg);
+    }
+]).triggerAction({matches:/^about/i});
+
+//////
 
 bot.dialog('test', function (session) {
   pmkbClient.isAlive(function (err, isUp) {
@@ -144,50 +194,6 @@ bot.dialog('thinking',[
 
 ).triggerAction({matches:/^thinking/i});
 
-bot.dialog('about', [
-    function (session) {
-        var url = "https://pmkb.weill.cornell.edu"
-        var msg = new builder.Message(session)
-            .textFormat(builder.TextFormat.xml)
-            .attachments([
-                new builder.HeroCard(session)
-                    .title("PMKB Bot")
-                    .subtitle("About:")
-                    .text(prompts.helpMsg)
-                    .images([
-                        builder.CardImage.create(session, "https://pbs.twimg.com/profile_banners/759029706360578048/1469801979/1500x500")
-                    ])
-                    .buttons([
-                        builder.CardAction.openUrl(session, url, 'Visit Website')
-                    ])
-                    .tap(builder.CardAction.openUrl(session, url))
-            ]);
-        session.endDialog(msg);
-    }
-]).triggerAction({matches:/^about/i});
-
-bot.dialog('disclaimer', [
-    function (session) {
-        var url = "https://pmkb.weill.cornell.edu"
-        var msg = new builder.Message(session)
-            .textFormat(builder.TextFormat.xml)
-            .attachments([
-                new builder.HeroCard(session)
-                    .title("Disclaimer")
-                    .subtitle("PMKB Bot")
-                    .text(prompts.disclaimerMsg)
-                    .images([
-                        builder.CardImage.create(session, "https://pbs.twimg.com/profile_banners/759029706360578048/1469801979/1500x500")
-                    ])
-                    .buttons([
-                        builder.CardAction.openUrl(session, url, 'Visit Website')
-                    ])
-                    .tap(builder.CardAction.openUrl(session, url))
-            ]);
-        session.endDialog(msg);
-    }
-]).triggerAction({matches:/^disclaimer/i});
-
 //=====================
 // Helper functions
 //=====================
@@ -213,7 +219,7 @@ function makeInterpretationCards(interpretations, session, query, callback) {
   const cards = _.map(interpretations, function (i) {
     return new builder.HeroCard(session)
                 .title(query.toUpperCase())
-                .subtitle("Interpretation: ")
+                .subtitle("Interpretation")
                 .text(i.interpretation)
                 .images([
                         builder.CardImage.create(session,  __dirname + "/assets/cards/" + randomIntInc(1,6)+".png")
