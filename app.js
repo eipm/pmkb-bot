@@ -22,8 +22,6 @@ server.listen(process.env.port || process.env.PORT || 3978, function () {
 var connector = new builder.ChatConnector({
   appId: process.env.MICROSOFT_APP_ID,
   appPassword: process.env.MICROSOFT_APP_PASSWORD
-  // appId: null,
-  // appPassword: null
 });
 var bot = new builder.UniversalBot(connector);
 server.post('/api/messages', connector.listen());
@@ -52,29 +50,6 @@ bot.on('conversationUpdate', function (message) {
     });
   }
 });
-
-// // Disclaimer message
-// bot.dialog('disclaimer', [
-//     function (session) {
-//         var url = "https://pmkb.weill.cornell.edu"
-//         var msg = new builder.Message(session)
-//             .textFormat(builder.TextFormat.xml)
-//             .attachments([
-//                 new builder.HeroCard(session)
-//                     .title("Disclaimer")
-//                     .subtitle("PMKB Bot")
-//                     .text(prompts.disclaimerMsg)
-//                     .images([
-//                         builder.CardImage.create(session, "https://pbs.twimg.com/profile_banners/759029706360578048/1469801979/1500x500")
-//                     ])
-//                     .buttons([
-//                         builder.CardAction.openUrl(session, url, 'Visit Website')
-//                     ])
-//                     .tap(builder.CardAction.openUrl(session, url))
-//             ]);
-//         session.endDialog(msg);
-//     }
-// ]).triggerAction({matches:/^disclaimer/i});
 
 // Disclaimer message
 bot.dialog('disclaimerStart', [
@@ -199,15 +174,12 @@ bot.dialog('about', [
     }
 ]).triggerAction({matches:/^about/i});
 
-
 // Exit Dialog.
 bot.dialog('exit', [
     function (session) {
         session.endDialog(prompts.exitMsg);
     }
 ]).triggerAction({matches:/^bye/i});
-
-
 
 //////
 
@@ -255,10 +227,8 @@ bot.dialog('record',[
     function(session, results){
          switch (results.response.index) {
             case 0:
-              session.beginDialog('doRecording');
-              
+              session.beginDialog('doRecording');     
         }
-    
   }
 ]).triggerAction({matches: /^record/i});
 
@@ -310,7 +280,7 @@ function makeQuery(luisResults, callback) {
   });
   const geneName = geneNames.length && geneNames[0].entity;
   const mutation = mutations.length && mutations[0].entity;
-  if (!geneName) return callback(new Error("I am sorry. I didn't quite get that. Could you please repeat your query making sure to include a gene name?"));
+  if (!geneName) return callback(new Error(prompts.errorMsg));
   let query = geneName;
   if (mutation) query += ' ' + mutation;
   return callback(null, {
