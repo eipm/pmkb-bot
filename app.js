@@ -74,7 +74,7 @@ bot.dialog('find gene',
       pmkbClient.searchInterpretations(query, function (err, interpretations) {
         if (err)
           return session.send(err.message);
-        makeInterpretationCards(interpretations, function (err, cards) {
+        makeInterpretationCards(interpretations, session, function (err, cards) {
           let reply = new builder.Message(session)
             .text('Found ' + interpretations.length + ' interpretations for ' + query)
             .attachmentLayout(builder.AttachmentLayout.carousel)
@@ -164,7 +164,7 @@ function makeQuery(luisResults, callback) {
   return callback(null, query);
 }
 
-function makeInterpretationCards(interpretations, callback) {
+function makeInterpretationCards(interpretations, session, callback) {
   const cards = _.map(interpretations, function (i) {
     return new builder.HeroCard(session).title('Hi').text(i.interpretation);
   });
