@@ -144,6 +144,37 @@ bot.dialog('thinking',[
 
 ).triggerAction({matches:/^thinking/i});
 
+bot.dialog('about', [
+    function (session) {
+
+        var result = "BRAF"
+        var interpretation = "BRAF is ..."
+
+        function randomIntInc (low, high) {
+            return Math.floor(Math.random() * (high - low + 1) + low);
+        }
+        image = randomIntInc(1,6)
+        url = "https://pmkb.weill.cornell.edu"
+
+        var msg = new builder.Message(session)
+            .textFormat(builder.TextFormat.xml)
+            .attachments([
+                new builder.HeroCard(session)
+                    .title("PMKB Bot")
+                    .subtitle("About: " + result + ' ' + image)
+                    .text(interpretation)
+                    .images([
+                        builder.CardImage.create(session, "https://pbs.twimg.com/profile_banners/759029706360578048/1469801979/1500x500")
+                    ])
+                    .buttons([
+                        builder.CardAction.openUrl(session, url, 'Read more')
+                    ])
+                    .tap(builder.CardAction.openUrl(session, url))
+            ]);
+        session.endDialog(msg);
+    }
+]).triggerAction({matches:/^about/i});
+
 //=====================
 // Helper functions
 //=====================
