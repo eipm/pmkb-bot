@@ -4,6 +4,7 @@ var prompts = require('./prompts');
 const PMKBClient = require('./lib/pmkbClient');
 const async = require('async');
 const configs = require('./config/configs');
+const _ = require('underscore');
 var fs = require('fs');
 var client = require('./lib/client');
 
@@ -19,10 +20,8 @@ server.listen(process.env.port || process.env.PORT || 3978, function () {
 
 // Create chat bot
 var connector = new builder.ChatConnector({
-//   appId: process.env.MICROSOFT_APP_ID,
-//   appPassword: process.env.MICROSOFT_APP_PASSWORD
-  appId: null,
-  appPassword: null
+  appId: process.env.MICROSOFT_APP_ID,
+  appPassword: process.env.MICROSOFT_APP_PASSWORD
 });
 var bot = new builder.UniversalBot(connector);
 server.post('/api/messages', connector.listen());
@@ -36,82 +35,153 @@ const pmkbClient = new PMKBClient(process.env.PMKB_HOST, process.env.PMKB_USER, 
 //=========================================================
 // Bots Dialogs
 //=========================================================
-bot.on('conversationUpdate', (message) => {
-    if (message.membersAdded) {
-        message.membersAdded.forEach((identity) => {
-            if (identity.id === message.address.bot.id) {
-                var hello = new builder.Message()
-                    .address(message.address)
-                    .text(prompts.greetMsg);
-                bot.send(hello);
-                bot.beginDialog(message.address, '*:/');
+
+// Executed when conversation starts.
+bot.on('conversationUpdate', function (message) {
+  if (message.membersAdded) {
+    message.membersAdded.forEach(function (identity) {
+      if (identity.id === message.address.bot.id) {
+        const greeting = new builder.Message()
+          .address(message.address)
+          .text(prompts.greetMsg);
+        bot.send(greeting);
+        bot.beginDialog(message.address, '*:disclaimerStart');
+      }
+    });
+  }
+});
+
+// Disclaimer message
+bot.dialog('disclaimerStart', [
+    function (session) {
+        var url = "https://pmkb.weill.cornell.edu"
+        var msg = new builder.Message(session)
+            .textFormat(builder.TextFormat.markdown)
+            .attachments([
+                new builder.ThumbnailCard(session)
+                    .title("Disclaimer")
+                    .subtitle("PMKB Bot")
+                    .text(prompts.disclaimerMsg)
+                    .images([
+                        builder.CardImage.create(session, "http://ipm.weill.cornell.edu/sites/default/files/logo_englander_2line_rgb_comp_1.jpg")
+                    ])
+                    .buttons([
+                        builder.CardAction.openUrl(session, url, 'Visit Website')
+                    ])
+                    .tap(builder.CardAction.openUrl(session, url))
+            ]);
+            session.send(msg);
+        session.beginDialog('getStarted');
     }
-})}});
+]);
 
-bot.dialog('/', [
-    (session)=>
-    {
-        session.send(prompts.helpMsg),
-        session.send(prompts.disclaimerMsg)
-        session.beginDialog('help');
-}]).triggerAction({matches: /(^hello)|(^hi)/i});
-
-bot.dialog('newSearch', [
-    function(session){
-        builder.Prompts.choice(session, prompts.newSearchMsg, 'Yes|No',  {listStyle:3})
-    },
-    function(session, results){
-        switch (results.response.index) {
-            case 0:
-                session.beginDialog('help');
-                break;
-            case 1:
-                session.send(prompts.exitMsg);
-                session.endDialog();
-                break;
-            default:
-                session.send(prompts.exitMsg);
-                session.endDialog();
-                break;
-        }
-    }]);
-
-bot.dialog('help', [
-    function(session){
-
-        builder.Prompts.choice(session, prompts.menuMsg, 'Gene|Variant|Primary Site|Tumor Type|Exit',  {listStyle:3})
-    },
-    function(session, results){
-         switch (results.response.index) {
-            case 0:
-                session.sendTyping();
-                session.beginDialog('find gene');
-                break;
-            case 1:
-                session.sendTyping();
-                session.send('Searching Variant...');
-                session.beginDialog('newSearch');
-                break;
-            case 2:
-                session.sendTyping();
-                session.send('Searching Primary Site ...');
-                session.beginDialog('newSearch');
-                break;
-            case 3:
-                session.sendTyping();
-                session.send('Searching Tumor Type ...');
-                session.beginDialog('newSearch');
-                break;
-            case 4:
-                session.send(prompts.exitMsg);
-                session.endDialog();
-                break;
-            default:
-                session.send(prompts.exitMsg);
-                session.endDialog();
-                break;
+// Getting Started Dialog.
+bot.dialog('getStarted', [
+    function (session) {
+        var url = "https://pmkb.weill.cornell.edu"
+        var msg = new builder.Message(session)
+            .attachments([
+                new builder.HeroCard(session)
+                    .title("PMKB Bot")
+                    .subtitle("Getting Started")
+                    .text(prompts.gettingStartedMsg)
+                    .images([
+                        builder.CardImage.create(session, "https://pbs.twimg.com/profile_banners/759029706360578048/1469801979/1500x500")
+                    ])
+                    .buttons([
+                        builder.CardAction.imBack(session, "examples", 'Show me Examples')
+                    ])
+                    .tap(builder.CardAction.openUrl(session, url))
+            ]);
+        session.endDialog(msg);
     }
-}]).triggerAction({matches: /^help/i});
+]);
+
+// Examples Dialog.
+bot.dialog('examples', [
+    function (session) {
+        var url = "https://pmkb.weill.cornell.edu"
+        var msg = new builder.Message(session)
+            .textFormat(builder.TextFormat.xml)
+            .attachments([
+                new builder.HeroCard(session)
+                    .title("PMKB Bot")
+                    .subtitle("Examples")
+                    .text(prompts.gettingStartedMsg)
+                    .images([
+                        builder.CardImage.create(session, "https://pbs.twimg.com/profile_banners/759029706360578048/1469801979/1500x500")
+                    ])
+                    .buttons([
+                        builder.CardAction.imBack(session, "examples", 'Show me Examples')
+                    ])
+                    .tap(builder.CardAction.openUrl(session, url))
+            ]);
+        // session.endDialog(msg);
+
+        var exampleCards = getExampleCardsAttachments();
+        var reply = new builder.Message(session)
+        .text('Examples')
+        .attachmentLayout(builder.AttachmentLayout.carousel)
+        .attachments(exampleCards);
+
+        session.endDialog(reply);
+    }
+]).triggerAction({matches:/(^examples)|(^help)/i});
+
+// Disclaimer message
+bot.dialog('disclaimer', [
+    function (session) {
+        var url = "https://pmkb.weill.cornell.edu"
+        var msg = new builder.Message(session)
+            .textFormat(builder.TextFormat.markdown)
+            .attachments([
+                new builder.ThumbnailCard(session)
+                    .title("Disclaimer")
+                    .subtitle("PMKB Bot")
+                    .text(prompts.disclaimerMsg)
+                    .images([
+                        builder.CardImage.create(session, "http://ipm.weill.cornell.edu/sites/default/files/logo_englander_2line_rgb_comp_1.jpg")
+                    ])
+                    .buttons([
+                        builder.CardAction.openUrl(session, url, 'Visit Website')
+                    ])
+                    .tap(builder.CardAction.openUrl(session, url))
+            ]);
+        session.endDialog(msg);
+    }
+]).triggerAction({matches:/^disclaimer/i});
+
+// About Dialog.
+bot.dialog('about', [
+    function (session) {
+        var url = "https://pmkb.weill.cornell.edu"
+        var msg = new builder.Message(session)
+            .textFormat(builder.TextFormat.xml)
+            .attachments([
+                new builder.HeroCard(session)
+                    .title("PMKB Bot")
+                    .subtitle("About")
+                    .text(prompts.gettingStartedMsg)
+                    .images([
+                        builder.CardImage.create(session, "https://pbs.twimg.com/profile_banners/759029706360578048/1469801979/1500x500")
+                    ])
+                    .buttons([
+                        builder.CardAction.openUrl(session, url, 'Visit Website')
+                    ])
+                    .tap(builder.CardAction.openUrl(session, url))
+            ]);
+        session.endDialog(msg);
+    }
+]).triggerAction({matches:/^about/i});
+
+// Exit Dialog.
+bot.dialog('exit', [
+    function (session) {
+        session.endDialog(prompts.exitMsg);
+    }
+]).triggerAction({matches:/^bye/i});
+
+//////
 
 bot.dialog('test', function (session) {
   pmkbClient.isAlive(function (err, isUp) {
@@ -119,23 +189,26 @@ bot.dialog('test', function (session) {
   })
 }).triggerAction({matches: /^test pmkb/});
 
-bot.dialog('find gene', [
-  function (session) {
-    builder.Prompts.text(session, 'What gene are you looking for?');
-  },
-  function (session, results) {
+bot.dialog('find gene',
+  //TODO: Refactor with async waterfall
+  function (session, luisResults) {
     session.sendTyping();
-    const geneName = results.response;
-    pmkbClient.getGenes(function (err, genes) {
-      async.filter(genes, function (gene, cb) {
-        cb(null, gene.name === geneName)  //TODO: match via regex
-      }, function (err, res) {
-        session.endDialog(res.length && res[0].name || ('Gene ' + geneName + ' does not exist'));
-        // TODO: Find all interpretations for this gene
-      })
-    })
-  } 
-]).triggerAction({matches: "findGene"});
+    makeQuery(luisResults, function (err, query) {
+      if (err)
+        return session.endDialog(err.message);
+      pmkbClient.searchInterpretations(query.value, function (err, interpretations) {
+        if (err)
+          return session.send(err.message);
+        makeInterpretationCards(interpretations, session, query.gene, function (err, cards) {
+          let reply = new builder.Message(session)
+            .text('Found ' + interpretations.length + ' interpretations for ' + query.value)
+            .attachmentLayout(builder.AttachmentLayout.carousel)
+            .attachments(cards);
+          session.endDialog(reply);
+        });
+      });
+    });
+  }).triggerAction({matches: "findGene"});
 
 bot.dialog('list genes', function (session) {
   pmkbClient.getGenes(function (err, genes) {
@@ -147,8 +220,6 @@ bot.dialog('list genes', function (session) {
   })
 }).triggerAction({matches: /^genes/});
 
-
-
 bot.dialog('record',[
   function(session){
         builder.Prompts.choice(session, prompts.menuMsg, 'Record', {listStyle:3});
@@ -156,10 +227,8 @@ bot.dialog('record',[
     function(session, results){
          switch (results.response.index) {
             case 0:
-              session.beginDialog('doRecording');
-              
+              session.beginDialog('doRecording');     
         }
-    
   }
 ]).triggerAction({matches: /^record/i});
 
@@ -176,7 +245,6 @@ bot.dialog('doRecording', [
               }
               session.beginDialog("thinking");
     });
-   
   }
 ]);
 
@@ -197,3 +265,106 @@ bot.dialog('thinking',[
 
 ).triggerAction({matches:/^thinking/i});
 
+//=====================
+// Helper functions
+//=====================
+
+function makeQuery(luisResults, callback) {
+  const entities = luisResults.intent.entities;
+  const geneNames = _.filter(entities, function (entity) {
+    return entity.type === 'Gene';
+  });
+  const mutations = _.filter(entities, function (entity) {
+    return entity.type === 'variant';
+  });
+  const geneName = geneNames.length && geneNames[0].entity;
+  const mutation = mutations.length && mutations[0].entity;
+  if (!geneName) return callback(new Error(prompts.errorMsg));
+  let query = geneName;
+  if (mutation) query += ' ' + mutation;
+  return callback(null, {
+    value: query,
+    gene: geneName,
+    mutation: mutation
+  });
+}
+
+function makeInterpretationCards(interpretations, session, mainGene, callback) {
+  const interpretationUrlBase = pmkbClient.host + '/therapies/';
+  mainGene = mainGene.toUpperCase();
+  let parts = _.partition(interpretations, (i) => i.gene.name === mainGene);
+  interpretations = parts[0].concat(parts[1]);  //Place most relevant genes first
+  const cards = _.map(interpretations, function (i) {
+    const interpretationUrl = interpretationUrlBase + i.id;
+    const title = 'Interpretation for ' +  i.gene.name;
+    const getNames = (objs) => _.map(objs, (obj) => obj.name);
+    const subtitle = 'Tumors({tumors}) Tissues({tissues}) Variants({variants})'
+      .replace('{tumors}', getNames(i.tumors))
+      .replace('{tissues}', getNames(i.tissues))
+      .replace('{variants}', getNames(i.variants));
+    return new builder.HeroCard(session)
+      .title(title)
+      .subtitle(subtitle)
+      .text(i.interpretation)
+      .images([
+        builder.CardImage.create(session, __dirname + "/assets/cards/" + randomIntInc(1, 6) + ".png")
+      ])
+      .buttons([
+        builder.CardAction.openUrl(session, interpretationUrl, 'Read more')
+      ])
+      .tap(builder.CardAction.openUrl(session, interpretationUrl));
+  });
+  callback(null, cards);
+}
+
+function randomIntInc(low, high) {
+  return Math.floor(Math.random() * (high - low + 1) + low);
+}
+
+function getExampleCardsAttachments(session) {
+    return [
+        new builder.HeroCard(session)
+            .title('Find EGFR')
+            // .subtitle('Offload the heavy lifting of data center management')
+            // .text('Store and help protect your data. Get durable, highly available data storage across the globe and pay only for what you use.')
+            .images([
+                builder.CardImage.create(session, __dirname + "/assets/cards/" + randomIntInc(1,6)+".png")
+            ])
+            .buttons([
+                builder.CardAction.imBack(session, "Find EGFR", 'Try It')
+            ]),
+
+        new builder.HeroCard(session)
+            .title('Find BRAF V600E')
+            // .subtitle('Blazing fast, planet-scale NoSQL')
+            // .text('NoSQL service for highly available, globally distributed apps—take full advantage of SQL and JavaScript over document and key-value data without the hassles of on-premises or virtual machine-based cloud database options.')
+            .images([
+                builder.CardImage.create(session, __dirname + "/assets/cards/" + randomIntInc(1,6)+".png")
+            ])
+            .buttons([
+                builder.CardAction.imBack(session, "Find BRAF V600E", 'Try It')
+            ]),
+
+        new builder.HeroCard(session)
+            .title('Find prostate cancer')
+            // .subtitle('Process events with a serverless code architecture')
+            // .text('An event-based serverless compute experience to accelerate your development. It can scale based on demand and you pay only for the resources you consume.')
+            .images([
+                builder.CardImage.create(session, __dirname + "/assets/cards/" + randomIntInc(1,6)+".png")
+            ])
+            .buttons([
+                builder.CardAction.imBack(session, "Find prostate cancer", 'Try It')
+            ]),
+
+        new builder.HeroCard(session)
+            .title('Find BRAF')
+            // .subtitle('Build powerful intelligence into your applications to enable natural and contextual interactions')
+            // .text('Enable natural and contextual interaction with tools that augment users\' experiences using the power of machine-based intelligence. Tap into an ever-growing collection of powerful artificial intelligence algorithms for vision, speech, language, and knowledge.')
+            .images([
+                builder.CardImage.create(session, __dirname + "/assets/cards/" + randomIntInc(1,6)+".png")
+            ])
+            .buttons([
+                builder.CardAction.imBack(session, "Find BRAF", 'Try It')
+            ])
+    ];
+}
