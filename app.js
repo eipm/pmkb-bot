@@ -165,8 +165,23 @@ function makeQuery(luisResults, callback) {
 }
 
 function makeInterpretationCards(interpretations, callback) {
+  random_image_path = __dirname + "/assets/cards/" + randomIntInc(1,6)+".png"
   const cards = _.map(interpretations, function (i) {
-    return new builder.HeroCard(session).title('Hi').text(i.interpretation);
+    return new builder.HeroCard(session)
+                .title('Hi')
+                .subtitle("About: ")
+                .text(i.interpretation)
+                .images([
+                        builder.CardImage.create(session, random_image_path)
+                ])
+                .buttons([
+                  builder.CardAction.openUrl(session, url, 'Read more')
+                ])
+                .tap(builder.CardAction.openUrl(session, url));
   });
   callback(null, cards);
+}
+
+function randomIntInc (low, high) {
+  return Math.floor(Math.random() * (high - low + 1) + low);
 }
