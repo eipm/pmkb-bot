@@ -117,8 +117,7 @@ bot.dialog('examples', [
                     ])
                     .tap(builder.CardAction.openUrl(session, url))
             ]);
-        // session.endDialog(msg);
-
+            
         var exampleCards = getExampleCardsAttachments();
         var reply = new builder.Message(session)
         .text('Examples')
@@ -181,8 +180,6 @@ bot.dialog('exit', [
         session.endDialog(prompts.exitMsg);
     }
 ]).triggerAction({matches:/^bye/i});
-
-//////
 
 bot.dialog('test', function (session) {
   pmkbClient.isAlive(function (err, isUp) {
@@ -253,8 +250,6 @@ bot.dialog('thinking',[
       session.send(reply)
     });
     }]
-
-
 ).triggerAction({matches:/^thinking/i});
 
 //=====================
@@ -318,8 +313,6 @@ function getExampleCardsAttachments(session) {
     return [
         new builder.HeroCard(session)
             .title('Find EGFR')
-            // .subtitle('Offload the heavy lifting of data center management')
-            // .text('Store and help protect your data. Get durable, highly available data storage across the globe and pay only for what you use.')
             .images([
                 builder.CardImage.create(session, __dirname + "/assets/cards/" + randomIntInc(1,6)+".png")
             ])
@@ -329,8 +322,6 @@ function getExampleCardsAttachments(session) {
 
         new builder.HeroCard(session)
             .title('Find BRAF V600E')
-            // .subtitle('Blazing fast, planet-scale NoSQL')
-            // .text('NoSQL service for highly available, globally distributed apps—take full advantage of SQL and JavaScript over document and key-value data without the hassles of on-premises or virtual machine-based cloud database options.')
             .images([
                 builder.CardImage.create(session, __dirname + "/assets/cards/" + randomIntInc(1,6)+".png")
             ])
@@ -340,8 +331,6 @@ function getExampleCardsAttachments(session) {
 
         new builder.HeroCard(session)
             .title('Find prostate cancer')
-            // .subtitle('Process events with a serverless code architecture')
-            // .text('An event-based serverless compute experience to accelerate your development. It can scale based on demand and you pay only for the resources you consume.')
             .images([
                 builder.CardImage.create(session, __dirname + "/assets/cards/" + randomIntInc(1,6)+".png")
             ])
@@ -351,8 +340,6 @@ function getExampleCardsAttachments(session) {
 
         new builder.HeroCard(session)
             .title('Find BRAF')
-            // .subtitle('Build powerful intelligence into your applications to enable natural and contextual interactions')
-            // .text('Enable natural and contextual interaction with tools that augment users\' experiences using the power of machine-based intelligence. Tap into an ever-growing collection of powerful artificial intelligence algorithms for vision, speech, language, and knowledge.')
             .images([
                 builder.CardImage.create(session, __dirname + "/assets/cards/" + randomIntInc(1,6)+".png")
             ])
@@ -364,11 +351,10 @@ function getExampleCardsAttachments(session) {
 
 function createThumbnailCard(session, text) {
     return new builder.ThumbnailCard(session)
-        .text("You said "+ text + ". Is this correct?")
-        
+        .text("You said "+ text + ". Is that correct?")
         .buttons([
             builder.CardAction.imBack(session, text, 'Yes'),
-            builder.CardAction.imBack(session, "record", 'Try again'),
+            builder.CardAction.imBack(session, "record", 'Record again'),
             builder.CardAction.imBack(session, "bye", 'No'),
         ]);
 }
