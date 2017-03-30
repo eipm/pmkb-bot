@@ -72,7 +72,7 @@ bot.dialog('disclaimerStart', [
             ]);
             session.send(msg);
         session.beginDialog('getStarted');
-    }
+   }
 ]);
 
 // Getting Started Dialog.
@@ -222,7 +222,8 @@ bot.dialog('list genes', function (session) {
 
 bot.dialog('record',[
   function(session){
-        builder.Prompts.choice(session, prompts.menuMsg, 'Record', {listStyle:3});
+      builder.Prompts.choice(session, "", "Record")
+ 
     },
     function(session, results){
          switch (results.response.index) {
@@ -256,9 +257,12 @@ bot.dialog('thinking',[
 
     const text = bing.recognize(wave).then(result => {
       console.log('Speech To Text completed');
-      console.log(result.header.lexical)
+      console.log(result.header.lexical);
       console.log('\n');
-      session.send(result.header.lexical)
+      var card = createThumbnailCard(session,result.header.lexical);
+      var reply = new builder.Message()
+        .addAttachment(card);
+      session.send(reply)
     });
     }]
 
@@ -367,4 +371,15 @@ function getExampleCardsAttachments(session) {
                 builder.CardAction.imBack(session, "Find BRAF", 'Try It')
             ])
     ];
+}
+
+function createThumbnailCard(session, text) {
+    return new builder.ThumbnailCard(session)
+        .text("You said "+ text + ". Is this correct?")
+        
+        .buttons([
+            builder.CardAction.imBack(session, text, 'Yes'),
+            builder.CardAction.imBack(session, "BYE", 'No'),
+
+        ]);
 }
