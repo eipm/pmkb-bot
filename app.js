@@ -19,10 +19,10 @@ server.listen(process.env.port || process.env.PORT || 3978, function () {
 
 // Create chat bot
 var connector = new builder.ChatConnector({
-  appId: process.env.MICROSOFT_APP_ID,
-  appPassword: process.env.MICROSOFT_APP_PASSWORD
-  // appId: null,
-  // appPassword: null
+//   appId: process.env.MICROSOFT_APP_ID,
+//   appPassword: process.env.MICROSOFT_APP_PASSWORD
+  appId: null,
+  appPassword: null
 });
 var bot = new builder.UniversalBot(connector);
 server.post('/api/messages', connector.listen());
@@ -36,29 +36,29 @@ const pmkbClient = new PMKBClient(process.env.PMKB_HOST, process.env.PMKB_USER, 
 //=========================================================
 // Bots Dialogs
 //=========================================================
-bot.on('conversationUpdate', function (message) {
+bot.on('conversationUpdate', (message) => {
     if (message.membersAdded) {
-        message.membersAdded.forEach(function (identity) {
+        message.membersAdded.forEach((identity) => {
             if (identity.id === message.address.bot.id) {
-                var reply = new builder.Message()
+                var hello = new builder.Message()
                     .address(message.address)
-                    .text('Hi! I am SpeechToText Bot. I can understand the content of any audio and convert it to text. Try sending me a wav file.');
-                bot.send(reply);
-            }
-        });
+                    .text(prompts.greetMsg);
+                bot.send(hello);
+                bot.beginDialog(message.address, '*:/');
     }
-});
+})}});
 
-bot.dialog('/', function (session) {
-  session.send(prompts.greetMsg);
-  session.send(prompts.helpMsg),
-  session.send(prompts.disclaimerMsg),
-  session.beginDialog('help');
-}).triggerAction({matches: /(^hello)|(^hi)/i});
+bot.dialog('/', [
+    (session)=>
+    {
+        session.send(prompts.helpMsg),
+        session.send(prompts.disclaimerMsg)
+        session.beginDialog('help');
+}]).triggerAction({matches: /(^hello)|(^hi)/i});
 
 bot.dialog('newSearch', [
     function(session){
-        builder.Prompts.choice(session, prompts.newSearchMsg, 'Yes|No')
+        builder.Prompts.choice(session, prompts.newSearchMsg, 'Yes|No',  {listStyle:3})
     },
     function(session, results){
         switch (results.response.index) {
@@ -79,7 +79,7 @@ bot.dialog('newSearch', [
 bot.dialog('help', [
     function(session){
 
-        builder.Prompts.choice(session, prompts.menuMsg, 'Gene|Variant|Primary Site|Tumor Type|Exit')
+        builder.Prompts.choice(session, prompts.menuMsg, 'Gene|Variant|Primary Site|Tumor Type|Exit',  {listStyle:3})
     },
     function(session, results){
          switch (results.response.index) {
@@ -151,7 +151,7 @@ bot.dialog('list genes', function (session) {
 
 bot.dialog('record',[
   function(session){
-        builder.Prompts.choice(session, prompts.menuMsg, 'Record', {liststyle:3});
+        builder.Prompts.choice(session, prompts.menuMsg, 'Record', {listStyle:3});
     },
     function(session, results){
          switch (results.response.index) {
@@ -174,7 +174,6 @@ bot.dialog('doRecording', [
               if (error !== null) {
                   console.log(`exec error: ${error}`);
               }
-              session.send("IM HEREEEE");
               session.beginDialog("thinking");
     });
    
@@ -197,3 +196,4 @@ bot.dialog('thinking',[
 
 
 ).triggerAction({matches:/^thinking/i});
+
