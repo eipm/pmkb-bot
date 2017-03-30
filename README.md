@@ -7,4 +7,4 @@ PMKB bot for the [Precision Medicine Knowledge Base](https://pmkb.weill.cornell.
 - [Get Visual Studio Code](https://code.visualstudio.com/Download)
 
 ## Features
-coming soon ...
+- [LUIS](https://luis.ai)

@@ -1,5 +1,5 @@
 # Deployment Instructions
-- [1. Deploy on localhost](#1-deploy-on-localhost)
+- [1. Deploy on Localhost](#1-deploy-on-localhost)
 - [2. Deploy using Docker](#2-deploy-using-docker)
 - [3. Deploy to Azure](#3-deploy-to-azure)
 
@@ -33,7 +33,7 @@ npm run startdev
 
 [![Docker Automated build](https://img.shields.io/docker/automated/jrottenberg/ffmpeg.svg)](https://hub.docker.com/r/elementolab/pmkb-hackfest/) [![Docker Pulls](https://img.shields.io/docker/pulls/elementolab/pmkb-hackfest.svg)](https://hub.docker.com/r/elementolab/pmkb-hacfest/) [![Docker Stars](https://img.shields.io/docker/stars/elementolab/pmkb-hackfest.svg)](https://hub.docker.com/r/elementolab/pmkb-hackfest/)
 
-## 2.1 Supported tags and respective `Dockerfile` links
+### 2.1 Supported tags and respective `Dockerfile` links
 
 -       [`latest` (*latest/Dockerfile*)](https://github.com/ElementoLab/pmkb-hackfest/blob/master/Dockerfile)
 
