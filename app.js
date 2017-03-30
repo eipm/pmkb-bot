@@ -6,6 +6,8 @@ const async = require('async');
 const configs = require('./config/configs');
 var fs = require('fs');
 var client = require('./lib/client');
+var tts = require('./TTSService.js');  
+
 
 //=========================================================
 // Bot Setup
@@ -122,6 +124,7 @@ bot.dialog('test', function (session) {
 bot.dialog('find gene', [
   function (session) {
     builder.Prompts.text(session, 'What gene are you looking for?');
+    tts.Synthesize('What gene are you looking for?');
   },
   function (session, results) {
     session.sendTyping();
