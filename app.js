@@ -4,6 +4,7 @@ var prompts = require('./prompts');
 const PMKBClient = require('./lib/pmkbClient');
 const async = require('async');
 const configs = require('./config/configs');
+const _ = require('underscore');
 var fs = require('fs');
 var client = require('./lib/client');
 
@@ -36,82 +37,26 @@ const pmkbClient = new PMKBClient(process.env.PMKB_HOST, process.env.PMKB_USER, 
 //=========================================================
 // Bots Dialogs
 //=========================================================
-// bot.on('conversationUpdate', function (message) {
-//     if (message.membersAdded) {
-//         message.membersAdded.forEach(function (identity) {
-//             if (identity.id === message.address.bot.id) {
-//                 var reply = new builder.Message()
-//                     .address(message.address)
-//                     .text('Hi! I am SpeechToText Bot. I can understand the content of any audio and convert it to text. Try sending me a wav file.');
-//                 bot.send(reply);
-//             }
-//         });
-//     }
-// });
-
-bot.dialog('/', function (session) {
-  session.send(prompts.greetMsg);
-  session.send(prompts.helpMsg),
-  session.send(prompts.disclaimerMsg),
-  session.beginDialog('help');
-}).triggerAction({matches: /(^hello)|(^hi)/i});
-
-bot.dialog('newSearch', [
-    function(session){
-        builder.Prompts.choice(session, prompts.newSearchMsg, 'Yes|No')
-    },
-    function(session, results){
-        switch (results.response.index) {
-            case 0:
-                session.beginDialog('help');
-                break;
-            case 1:
-                session.send(prompts.exitMsg);
-                session.endDialog();
-                break;
-            default:
-                session.send(prompts.exitMsg);
-                session.endDialog();
-                break;
-        }
-    }]);
-
-bot.dialog('help', [
-    function(session){
-
-        builder.Prompts.choice(session, prompts.menuMsg, 'Gene|Variant|Primary Site|Tumor Type|Exit')
-    },
-    function(session, results){
-         switch (results.response.index) {
-            case 0:
-                session.sendTyping();
-                session.beginDialog('find gene');
-                break;
-            case 1:
-                session.sendTyping();
-                session.send('Searching Variant...');
-                session.beginDialog('newSearch');
-                break;
-            case 2:
-                session.sendTyping();
-                session.send('Searching Primary Site ...');
-                session.beginDialog('newSearch');
-                break;
-            case 3:
-                session.sendTyping();
-                session.send('Searching Tumor Type ...');
-                session.beginDialog('newSearch');
-                break;
-            case 4:
-                session.send(prompts.exitMsg);
-                session.endDialog();
-                break;
-            default:
-                session.send(prompts.exitMsg);
-                session.endDialog();
-                break;
-    }
-}]).triggerAction({matches: /^help/i});
+bot.on('conversationUpdate', function (message) {
+  if (message.membersAdded) {
+    message.membersAdded.forEach(function (identity) {
+      if (identity.id === message.address.bot.id) {
+        const greeting = new builder.Message()
+          .address(message.address)
+          .text(prompts.greetMsg);
+        const help = new builder.Message()
+          .address(message.address)
+          .text(prompts.helpMsg);
+        const disclaimer = new builder.Message()
+          .address(message.address)
+          .text(prompts.disclaimerMsg);
+        bot.send(greeting);
+        bot.send(help);
+        bot.send(disclaimer);
+      }
+    });
+  }
+});
 
 bot.dialog('test', function (session) {
   pmkbClient.isAlive(function (err, isUp) {
@@ -119,23 +64,31 @@ bot.dialog('test', function (session) {
   })
 }).triggerAction({matches: /^test pmkb/});
 
-bot.dialog('find gene', [
-  function (session) {
-    builder.Prompts.text(session, 'What gene are you looking for?');
-  },
+bot.dialog('find gene',
   function (session, results) {
     session.sendTyping();
-    const geneName = results.response;
-    pmkbClient.getGenes(function (err, genes) {
-      async.filter(genes, function (gene, cb) {
-        cb(null, gene.name === geneName)  //TODO: match via regex
-      }, function (err, res) {
-        session.endDialog(res.length && res[0].name || ('Gene ' + geneName + ' does not exist'));
-        // TODO: Find all interpretations for this gene
-      })
-    })
-  } 
-]).triggerAction({matches: "findGene"});
+    const entities = results.intent.entities;
+    const geneNames = _.filter(entities, function (entity) {
+      return entity.type === 'Gene';
+    });
+    const mutations = _.filter(entities, function (entity) {
+      return entity.type === 'variant';
+    });
+    const geneName = geneNames.length && geneNames[0].entity;
+    const mutation = mutations.length && mutations[0].entity;
+    if (!geneName) return session.send('Cannot find any interpretation without a gene name');
+    let query = geneName;
+    if (mutation) query += ' ' + mutation;
+    pmkbClient.searchInterpretations(query, function (err, interpretations) {
+      if (err)
+        return session.send(err.message);
+      session.send('Found ' + interpretations.length + ' interpretations for ' + query);
+      _.each(interpretations, function (i) {
+        session.send(i.interpretation);
+      });
+      session.endDialog('Let me know how else I can help');
+    });
+  }).triggerAction({matches: "findGene"});
 
 bot.dialog('list genes', function (session) {
   pmkbClient.getGenes(function (err, genes) {
