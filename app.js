@@ -7,7 +7,7 @@ const configs = require('./config/configs');
 const _ = require('underscore');
 var fs = require('fs');
 var client = require('./lib/client');
-var tts = require('./TTSService.js');  
+// var tts = require('./TTSService.js');  
 
 
 //=========================================================
@@ -96,7 +96,7 @@ bot.dialog('getStarted', [
                     ])
                     .tap(builder.CardAction.openUrl(session, url))
             ]);
-           tts.Synthesize('What gene are you looking for?');
+        //    tts.Synthesize('What gene are you looking for?');
 
         session.endDialog(msg);
     }
@@ -191,6 +191,12 @@ bot.dialog('test', function (session) {
   })
 }).triggerAction({matches: /^test pmkb/});
 
+// Exit Dialog.
+bot.dialog('whoAmI', [
+    function (session) {
+        session.endDialog(prompts.whoAmI);
+    }
+]).triggerAction({matches:/^who are you.*/i});
 
 bot.dialog('find gene',
   //TODO: Refactor with async waterfall

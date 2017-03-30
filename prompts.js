@@ -4,5 +4,6 @@ module.exports= {
     gettingStartedMsg: 'Type your query to get started. You can also check some examples of what you can do by clicking below.',
     menuMsg: 'What would you like to search?',
     exitMsg: 'Thank you for using PMKB. Enjoy your day :)',
-    errorMsg: "I am sorry. I didn't quite get that. Could you please repeat your query making sure to include a gene name?"
+    errorMsg: "I am sorry. I didn't quite get that. Could you please repeat your query making sure to include a gene name? If unsure type 'help'",
+    whoAmI: "I am the PMKB Bot."
 }
