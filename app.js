@@ -165,14 +165,14 @@ function makeQuery(luisResults, callback) {
 }
 
 function makeInterpretationCards(interpretations, session, callback) {
-  random_image_path = __dirname + "/assets/cards/" + randomIntInc(1,6)+".png"
+  url = "https://pmkb.weill.cornell.edu"
   const cards = _.map(interpretations, function (i) {
     return new builder.HeroCard(session)
                 .title('Hi')
                 .subtitle("About: ")
                 .text(i.interpretation)
                 .images([
-                        builder.CardImage.create(session, random_image_path)
+                        builder.CardImage.create(session,  __dirname + "/assets/cards/" + randomIntInc(1,6)+".png")
                 ])
                 .buttons([
                   builder.CardAction.openUrl(session, url, 'Read more')
