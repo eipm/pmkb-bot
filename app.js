@@ -65,28 +65,23 @@ bot.dialog('test', function (session) {
 }).triggerAction({matches: /^test pmkb/});
 
 bot.dialog('find gene',
-  function (session, results) {
+  //TODO: Refactor with async waterfall
+  function (session, luisResults) {
     session.sendTyping();
-    const entities = results.intent.entities;
-    const geneNames = _.filter(entities, function (entity) {
-      return entity.type === 'Gene';
-    });
-    const mutations = _.filter(entities, function (entity) {
-      return entity.type === 'variant';
-    });
-    const geneName = geneNames.length && geneNames[0].entity;
-    const mutation = mutations.length && mutations[0].entity;
-    if (!geneName) return session.send('Cannot find any interpretation without a gene name');
-    let query = geneName;
-    if (mutation) query += ' ' + mutation;
-    pmkbClient.searchInterpretations(query, function (err, interpretations) {
+    makeQuery(luisResults, function (err, query) {
       if (err)
-        return session.send(err.message);
-      session.send('Found ' + interpretations.length + ' interpretations for ' + query);
-      _.each(interpretations, function (i) {
-        session.send(i.interpretation);
+        return session.endDialog(err.message);
+      pmkbClient.searchInterpretations(query, function (err, interpretations) {
+        if (err)
+          return session.send(err.message);
+        makeInterpretationCards(interpretations, function (err, cards) {
+          let reply = new builder.Message(session)
+            .text('Found ' + interpretations.length + ' interpretations for ' + query)
+            .attachmentLayout(builder.AttachmentLayout.carousel)
+            .attachments(cards);
+          session.endDialog(reply);
+        });
       });
-      session.endDialog('Let me know how else I can help');
     });
   }).triggerAction({matches: "findGene"});
 
@@ -99,8 +94,6 @@ bot.dialog('list genes', function (session) {
     })
   })
 }).triggerAction({matches: /^genes/});
-
-
 
 bot.dialog('record',[
   function(session){
@@ -150,3 +143,30 @@ bot.dialog('thinking',[
 
 
 ).triggerAction({matches:/^thinking/i});
+
+//=====================
+// Helper functions
+//=====================
+
+function makeQuery(luisResults, callback) {
+  const entities = luisResults.intent.entities;
+  const geneNames = _.filter(entities, function (entity) {
+    return entity.type === 'Gene';
+  });
+  const mutations = _.filter(entities, function (entity) {
+    return entity.type === 'variant';
+  });
+  const geneName = geneNames.length && geneNames[0].entity;
+  const mutation = mutations.length && mutations[0].entity;
+  if (!geneName) return callback(new Error('Cannot make a query for interpretations without a gene name'));
+  let query = geneName;
+  if (mutation) query += ' ' + mutation;
+  return callback(null, query);
+}
+
+function makeInterpretationCards(interpretations, callback) {
+  const cards = _.map(interpretations, function (i) {
+    return new builder.HeroCard(session).title('Hi').text(i.interpretation);
+  });
+  callback(null, cards);
+}
