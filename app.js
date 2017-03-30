@@ -109,7 +109,7 @@ bot.dialog('getStarted', [
                 new builder.HeroCard(session)
                     .title("PMKB Bot")
                     .subtitle("Getting Started")
-                    .text("**test**" + prompts.gettingStartedMsg)
+                    .text(prompts.gettingStartedMsg)
                     .images([
                         builder.CardImage.create(session, "https://pbs.twimg.com/profile_banners/759029706360578048/1469801979/1500x500")
                     ])
