@@ -8,3 +8,7 @@ PMKB bot for the [Precision Medicine Knowledge Base](https://pmkb.weill.cornell.
 -       [`latest` (*latest/Dockerfile*)](https://github.com/ElementoLab/pmkb-hackfest/blob/master/Dockerfile)
 
 ## [Deployment Instructions](docs/deployment_instructions.md)
+
+## Deploy
+
+[![Deploy to Azure](http://azuredeploy.net/deploybutton.png)](https://azuredeploy.net/)
