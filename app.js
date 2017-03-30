@@ -45,6 +45,7 @@ bot.on('conversationUpdate', (message) => {
                     .text(prompts.greetMsg);
                 bot.send(hello);
                 bot.beginDialog(message.address, '*:/');
+            
     }
 })}});
 
@@ -151,7 +152,8 @@ bot.dialog('list genes', function (session) {
 
 bot.dialog('record',[
   function(session){
-        builder.Prompts.choice(session, prompts.menuMsg, 'Record', {listStyle:3});
+      builder.Prompts.choice(session, "", "Record")
+ 
     },
     function(session, results){
          switch (results.response.index) {
@@ -188,12 +190,27 @@ bot.dialog('thinking',[
 
     const text = bing.recognize(wave).then(result => {
       console.log('Speech To Text completed');
-      console.log(result.header.lexical)
+      console.log(result.header.lexical);
       console.log('\n');
-      session.send(result.header.lexical)
+      var card = createThumbnailCard(session,result.header.lexical);
+      var reply = new builder.Message()
+        .addAttachment(card);
+      session.send(reply)
     });
     }]
 
 
 ).triggerAction({matches:/^thinking/i});
+
+function createThumbnailCard(session, text) {
+    return new builder.ThumbnailCard(session)
+        .text("You said "+ text + ". Is this correct?")
+        
+        .buttons([
+            builder.CardAction.imBack(session, text, 'Yes'),
+            builder.CardAction.imBack(session, "BYE", 'No'),
+
+        ]);
+}
+
 
