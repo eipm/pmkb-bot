@@ -9,14 +9,6 @@ var fs = require('fs');
 var client = require('./lib/client');
 // var tts = require('./TTSService.js');  
 
-var express = require('express')
-var app = express()
-// app.use('/assets', express.static('assets'))
-// app.use(express.static('public'))
-
-app.use(express.static(__dirname + '/public'));
-app.listen(443);
-
 //=========================================================
 // Bot Setup
 //=========================================================
@@ -99,7 +91,7 @@ bot.dialog('getStarted', [
                     ])
                     .buttons([
                         builder.CardAction.imBack(session, "examples", 'Show me Examples'),
-                         builder.CardAction.imBack(session, "record", 'Say it')
+                        //  builder.CardAction.imBack(session, "record", 'Say it')
                     ])
                     .tap(builder.CardAction.openUrl(session, url))
             ]);
@@ -236,39 +228,39 @@ bot.dialog('list genes', function (session) {
   })
 }).triggerAction({matches: /^genes/});
 
-bot.dialog('startRecording', [
-  function(session){
-    session.send("Recording");
-    const exec = require('child_process').exec;
-    const child = exec('sox -t waveaudio default new.wav trim 0 6',
-          (error, stdout, stderr) => {
-              console.log(`stdout: ${stdout}`);
-              console.log(`stderr: ${stderr}`);
-              if (error !== null) {
-                  console.log(`exec error: ${error}`);
-              }
-              session.beginDialog("thinking");
-    });
-  }
-]).triggerAction({matches:/(^record)/i});
+// bot.dialog('startRecording', [
+//   function(session){
+//     session.send("Recording");
+//     const exec = require('child_process').exec;
+//     const child = exec('sox -t waveaudio default new.wav trim 0 6',
+//           (error, stdout, stderr) => {
+//               console.log(`stdout: ${stdout}`);
+//               console.log(`stderr: ${stderr}`);
+//               if (error !== null) {
+//                   console.log(`exec error: ${error}`);
+//               }
+//               session.beginDialog("thinking");
+//     });
+//   }
+// ]).triggerAction({matches:/(^record)/i});
 
-bot.dialog('thinking',[
-  function(session){
-    var bing = new client.BingSpeechClient('148c262df6f7418fbcca86479848f61a');
-    var results = '';
-    var wave = fs.readFileSync('./new.wav');
+// bot.dialog('thinking',[
+//   function(session){
+//     var bing = new client.BingSpeechClient('148c262df6f7418fbcca86479848f61a');
+//     var results = '';
+//     var wave = fs.readFileSync('./new.wav');
 
-    const text = bing.recognize(wave).then(result => {
-      console.log('Speech To Text completed');
-      console.log(result.header.lexical);
-      console.log('\n');
-      var card = createThumbnailCard(session,result.header.lexical);
-      var reply = new builder.Message()
-        .addAttachment(card);
-      session.send(reply)
-    });
-    }]
-).triggerAction({matches:/^thinking/i});
+//     const text = bing.recognize(wave).then(result => {
+//       console.log('Speech To Text completed');
+//       console.log(result.header.lexical);
+//       console.log('\n');
+//       var card = createThumbnailCard(session,result.header.lexical);
+//       var reply = new builder.Message()
+//         .addAttachment(card);
+//       session.send(reply)
+//     });
+//     }]
+// ).triggerAction({matches:/^thinking/i});
 
 //=====================
 // Helper functions
@@ -295,7 +287,6 @@ function makeQuery(luisResults, callback) {
 }
 
 function makeInterpretationCards(interpretations, session, mainGene, callback) {
-//   const interpretationUrlBase = pmkbClient.host + '/therapies/';
   const interpretationUrlBase = "https://pmkb.weill.cornell.edu" + '/therapies/';
   mainGene = mainGene.toUpperCase();
   let parts = _.partition(interpretations, (i) => i.gene.name === mainGene);
@@ -314,7 +305,7 @@ function makeInterpretationCards(interpretations, session, mainGene, callback) {
       .text(i.interpretation)
       .images([
         // builder.CardImage.create(session, __dirname + "\\assets\\cards\\" + randomIntInc(1, 6) + ".png")
-        builder.CardImage.create(session, "assets\\cards\\" + randomIntInc(1, 6) + ".png")
+        builder.CardImage.create(session, "https://www.dropbox.com/s/3t56ozrs1kjvjvf/" + randomIntInc(1, 6) + ".png")
       ])
       .buttons([
         builder.CardAction.openUrl(session, interpretationUrl, 'Read more')
@@ -368,12 +359,12 @@ function getExampleCardsAttachments(session) {
     ];
 }
 
-function createThumbnailCard(session, text) {
-    return new builder.ThumbnailCard(session)
-        .text("You said "+ text + ". Is that correct?")
-        .buttons([
-            builder.CardAction.imBack(session, text, 'Yes'),
-            builder.CardAction.imBack(session, "record", 'Record again'),
-            builder.CardAction.imBack(session, "bye", 'No'),
-        ]);
-}
+// function createThumbnailCard(session, text) {
+//     return new builder.ThumbnailCard(session)
+//         .text("You said "+ text + ". Is that correct?")
+//         .buttons([
+//             builder.CardAction.imBack(session, text, 'Yes'),
+//             // builder.CardAction.imBack(session, "record", 'Record again'),
+//             builder.CardAction.imBack(session, "bye", 'No'),
+//         ]);
+// }
