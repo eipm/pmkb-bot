@@ -306,7 +306,8 @@ function makeInterpretationCards(interpretations, session, mainGene, callback) {
       .subtitle(subtitle)
       .text(i.interpretation)
       .images([
-        builder.CardImage.create(session, __dirname + "\\assets\\cards\\" + randomIntInc(1, 6) + ".png")
+        // builder.CardImage.create(session, __dirname + "\\assets\\cards\\" + randomIntInc(1, 6) + ".png")
+        builder.CardImage.create(session, "assets\\cards\\" + randomIntInc(1, 6) + ".png")
       ])
       .buttons([
         builder.CardAction.openUrl(session, interpretationUrl, 'Read more')
