@@ -306,7 +306,7 @@ function makeInterpretationCards(interpretations, session, mainGene, callback) {
       .subtitle(subtitle)
       .text(i.interpretation)
       .images([
-        builder.CardImage.create(session, __dirname + "\assets\cards\\" + randomIntInc(1, 6) + ".png")
+        builder.CardImage.create(session, __dirname + "\\assets\\cards\\" + randomIntInc(1, 6) + ".png")
       ])
       .buttons([
         builder.CardAction.openUrl(session, interpretationUrl, 'Read more')
@@ -325,7 +325,7 @@ function getExampleCardsAttachments(session) {
         new builder.HeroCard(session)
             .title('Find EGFR')
             .images([
-                builder.CardImage.create(session, __dirname + "\assets\cards\\" + randomIntInc(1,6)+".png")
+                builder.CardImage.create(session, __dirname + "\\assets\\cards\\" + randomIntInc(1,6)+".png")
             ])
             .buttons([
                 builder.CardAction.imBack(session, "Find EGFR", 'Try It')
@@ -334,7 +334,7 @@ function getExampleCardsAttachments(session) {
         new builder.HeroCard(session)
             .title('Find BRAF V600E')
             .images([
-                builder.CardImage.create(session, __dirname + "\assets\cards\\" + randomIntInc(1,6)+".png")
+                builder.CardImage.create(session, __dirname + "\\assets\\cards\\" + randomIntInc(1,6)+".png")
             ])
             .buttons([
                 builder.CardAction.imBack(session, "Find BRAF V600E", 'Try It')
@@ -343,7 +343,7 @@ function getExampleCardsAttachments(session) {
         new builder.HeroCard(session)
             .title('Find prostate cancer')
             .images([
-                builder.CardImage.create(session, __dirname + "\assets\cards\\" + randomIntInc(1,6)+".png")
+                builder.CardImage.create(session, __dirname + "\\assets\\cards\\" + randomIntInc(1,6)+".png")
             ])
             .buttons([
                 builder.CardAction.imBack(session, "Find prostate cancer", 'Try It')
@@ -352,7 +352,7 @@ function getExampleCardsAttachments(session) {
         new builder.HeroCard(session)
             .title('Find BRAF')
             .images([
-                builder.CardImage.create(session, __dirname + "\assets\cards\\" + randomIntInc(1,6)+".png")
+                builder.CardImage.create(session, __dirname + "\\assets\\cards\\" + randomIntInc(1,6)+".png")
             ])
             .buttons([
                 builder.CardAction.imBack(session, "Find BRAF", 'Try It')
