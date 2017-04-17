@@ -9,6 +9,10 @@ var fs = require('fs');
 var client = require('./lib/client');
 // var tts = require('./TTSService.js');  
 
+var express = require('express')
+var app = express()
+// app.use('/assets', express.static('assets'))
+app.use(express.static('public'))
 
 //=========================================================
 // Bot Setup
