@@ -201,7 +201,7 @@ bot.dialog('whoAmI', [
     function (session) {
         session.endDialog(prompts.whoAmI);
     }
-]).triggerAction({matches:/^who are you.*/i});
+]).triggerAction({matches:/(^who are you.*)|(^what is your name.*)/i});
 
 // Find Gene Dialog
 bot.dialog('find gene',
