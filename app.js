@@ -27,14 +27,15 @@ var connector = new builder.ChatConnector({
 var bot = new builder.UniversalBot(connector);
 server.post('/api/messages', connector.listen());
 
+// Configure LUIS recognizer. ENV variables are stored in Azure.
 var recognizer = new builder.LuisRecognizer(process.env.LUIS_URL);
 bot.recognizer(recognizer);
 
-// Config PMKB Client. The env variables are set in Azure.
+// Configure PMKB Client. ENV variables are stored in Azure.
 const pmkbClient = new PMKBClient(process.env.PMKB_HOST, process.env.PMKB_USER, process.env.PMKB_PASS);
 
 //=========================================================
-// Bots Dialogs
+// Bot Dialogs
 //=========================================================
 
 // Executed when conversation starts.
@@ -264,7 +265,7 @@ function makeInterpretationCards(interpretations, session, query, callback) {
   const interpretationUrlBase = "https://pmkb.weill.cornell.edu" + '/therapies/';
   mainGene = query.gene.toUpperCase();
   let parts = _.partition(interpretations, (i) => i.gene.name === mainGene);
-  interpretations = parts[0].concat(parts[1]);  //Place most relevant genes first
+  interpretations = parts[0].concat(parts[1]);  // Place most relevant genes first
 
   const cards = _.map(interpretations, function (i) {
     const interpretationUrl = interpretationUrlBase + i.id;
