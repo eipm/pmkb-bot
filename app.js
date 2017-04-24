@@ -289,10 +289,10 @@ function makeInterpretationCards(interpretations, session, query, callback) {
   });
 
   total_interpretations = interpretations.length
-  max_cards = 5;
+  max_cards = 10;
   if (interpretations.length > max_cards) {
-      interpretations = interpretations.slice(0, max_cards - 1);
-      var total_cards = cards.concat(getReadMoreCard(session, query, total_interpretations))
+      reduced_cards = cards.slice(0, max_cards - 1);
+      var total_cards = reduced_cards.concat(getReadMoreCard(session, query, total_interpretations))
       callback(null, total_cards);
   }
   else {
