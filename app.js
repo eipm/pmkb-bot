@@ -7,7 +7,6 @@ const configs = require('./config/configs');
 const _ = require('underscore');
 var fs = require('fs');
 var client = require('./lib/client');
-// var tts = require('./TTSService.js');  
 
 //=========================================================
 // Bot Setup
@@ -24,13 +23,15 @@ var connector = new builder.ChatConnector({
   appId: process.env.MICROSOFT_APP_ID,
   appPassword: process.env.MICROSOFT_APP_PASSWORD
 });
+
 var bot = new builder.UniversalBot(connector);
 server.post('/api/messages', connector.listen());
 
 var recognizer = new builder.LuisRecognizer('https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/40854c2f-ef7d-4b0a-9b8c-2423255f02d0?subscription-key=686d01692e8c47ec87bdc838e7e1a95f');
+
 bot.recognizer(recognizer);
 
-// Config PMKB Client
+// Config PMKB Client. The env variables are set in Azure.
 const pmkbClient = new PMKBClient(process.env.PMKB_HOST, process.env.PMKB_USER, process.env.PMKB_PASS);
 
 //=========================================================
@@ -51,6 +52,14 @@ bot.on('conversationUpdate', function (message) {
     });
   }
 });
+
+// Hello message
+bot.dialog('hello', [ 
+    function (session) {
+        session.send(prompts.greetMsg);
+        session.beginDialog('disclaimerStart');
+    }
+]).triggerAction({matches:/(^hello)|(^hi)|(^help)/i});
 
 // Disclaimer message
 bot.dialog('disclaimerStart', [
@@ -91,12 +100,9 @@ bot.dialog('getStarted', [
                     ])
                     .buttons([
                         builder.CardAction.imBack(session, "examples", 'Show me Examples'),
-                        //  builder.CardAction.imBack(session, "record", 'Say it')
                     ])
                     .tap(builder.CardAction.openUrl(session, url))
             ]);
-        //    tts.Synthesize('What gene are you looking for?');
-
         session.endDialog(msg);
     }
 ]);
@@ -129,7 +135,7 @@ bot.dialog('examples', [
 
         session.endDialog(reply);
     }
-]).triggerAction({matches:/(^examples)|(^help)/i});
+]).triggerAction({matches:/(^examples)/i});
 
 // Disclaimer message
 bot.dialog('disclaimer', [
@@ -154,7 +160,7 @@ bot.dialog('disclaimer', [
     }
 ]).triggerAction({matches:/^disclaimer/i});
 
-// About Dialog.
+// About Dialog
 bot.dialog('about', [
     function (session) {
         var url = "https://pmkb.weill.cornell.edu"
@@ -177,7 +183,7 @@ bot.dialog('about', [
     }
 ]).triggerAction({matches:/^about/i});
 
-// Exit Dialog.
+// Exit Dialog
 bot.dialog('exit', [
     function (session) {
         session.endDialog(prompts.exitMsg);
@@ -190,13 +196,14 @@ bot.dialog('test', function (session) {
   })
 }).triggerAction({matches: /^test pmkb/});
 
-// Exit Dialog.
+// Who Are you? Dialog
 bot.dialog('whoAmI', [
     function (session) {
         session.endDialog(prompts.whoAmI);
     }
 ]).triggerAction({matches:/^who are you.*/i});
 
+// Find Gene Dialog
 bot.dialog('find gene',
   //TODO: Refactor with async waterfall
   function (session, luisResults) {
@@ -207,7 +214,8 @@ bot.dialog('find gene',
       pmkbClient.searchInterpretations(query.value, function (err, interpretations) {
         if (err)
           return session.send(err.message);
-        makeInterpretationCards(interpretations, session, query.gene, function (err, cards) {
+        console.log(query)
+        makeInterpretationCards(interpretations, session, query, function (err, cards) {
           let reply = new builder.Message(session)
             .text('Found ' + interpretations.length + ' interpretations for ' + query.value)
             .attachmentLayout(builder.AttachmentLayout.carousel)
@@ -216,8 +224,9 @@ bot.dialog('find gene',
         });
       });
     });
-  }).triggerAction({matches: "findGene"});
+  }).triggerAction({matches: "findGene"});  
 
+// List Genes Dialog
 bot.dialog('list genes', function (session) {
   pmkbClient.getGenes(function (err, genes) {
     async.map(genes, function (gene, cb) {
@@ -227,40 +236,6 @@ bot.dialog('list genes', function (session) {
     })
   })
 }).triggerAction({matches: /^genes/});
-
-// bot.dialog('startRecording', [
-//   function(session){
-//     session.send("Recording");
-//     const exec = require('child_process').exec;
-//     const child = exec('sox -t waveaudio default new.wav trim 0 6',
-//           (error, stdout, stderr) => {
-//               console.log(`stdout: ${stdout}`);
-//               console.log(`stderr: ${stderr}`);
-//               if (error !== null) {
-//                   console.log(`exec error: ${error}`);
-//               }
-//               session.beginDialog("thinking");
-//     });
-//   }
-// ]).triggerAction({matches:/(^record)/i});
-
-// bot.dialog('thinking',[
-//   function(session){
-//     var bing = new client.BingSpeechClient('148c262df6f7418fbcca86479848f61a');
-//     var results = '';
-//     var wave = fs.readFileSync('./new.wav');
-
-//     const text = bing.recognize(wave).then(result => {
-//       console.log('Speech To Text completed');
-//       console.log(result.header.lexical);
-//       console.log('\n');
-//       var card = createThumbnailCard(session,result.header.lexical);
-//       var reply = new builder.Message()
-//         .addAttachment(card);
-//       session.send(reply)
-//     });
-//     }]
-// ).triggerAction({matches:/^thinking/i});
 
 //=====================
 // Helper functions
@@ -286,11 +261,12 @@ function makeQuery(luisResults, callback) {
   });
 }
 
-function makeInterpretationCards(interpretations, session, mainGene, callback) {
+function makeInterpretationCards(interpretations, session, query, callback) {
   const interpretationUrlBase = "https://pmkb.weill.cornell.edu" + '/therapies/';
-  mainGene = mainGene.toUpperCase();
+  mainGene = query.gene.toUpperCase();
   let parts = _.partition(interpretations, (i) => i.gene.name === mainGene);
   interpretations = parts[0].concat(parts[1]);  //Place most relevant genes first
+
   const cards = _.map(interpretations, function (i) {
     const interpretationUrl = interpretationUrlBase + i.id;
     const title = 'Interpretation for ' +  i.gene.name;
@@ -304,7 +280,6 @@ function makeInterpretationCards(interpretations, session, mainGene, callback) {
       .subtitle(subtitle)
       .text(i.interpretation)
       .images([
-        // builder.CardImage.create(session, __dirname + "\\assets\\cards\\" + randomIntInc(1, 6) + ".png")
         builder.CardImage.create(session, "https://ipm.weill.cornell.edu/sites/default/files/" + randomIntInc(1, 6) + ".png")
       ])
       .buttons([
@@ -312,7 +287,17 @@ function makeInterpretationCards(interpretations, session, mainGene, callback) {
       ])
       .tap(builder.CardAction.openUrl(session, interpretationUrl));
   });
-  callback(null, cards);
+
+  total_interpretations = interpretations.length
+  max_cards = 10;
+  if (interpretations.length > max_cards) {
+      interpretations = interpretations.slice(0, max_cards - 1);
+      var total_cards = cards.concat(getReadMoreCard(session, query, total_interpretations))
+      callback(null, total_cards);
+  }
+  else {
+    callback(null, cards);    
+  }
 }
 
 function randomIntInc(low, high) {
@@ -359,12 +344,17 @@ function getExampleCardsAttachments(session) {
     ];
 }
 
-// function createThumbnailCard(session, text) {
-//     return new builder.ThumbnailCard(session)
-//         .text("You said "+ text + ". Is that correct?")
-//         .buttons([
-//             builder.CardAction.imBack(session, text, 'Yes'),
-//             // builder.CardAction.imBack(session, "record", 'Record again'),
-//             builder.CardAction.imBack(session, "bye", 'No'),
-//         ]);
-// }
+function getReadMoreCard(session, query, total_interpretations) {
+    return [
+        new builder.HeroCard(session)
+            .title('Interpretations for ' +  query.value)
+            .images([
+                builder.CardImage.create(session, "https://ipm.weill.cornell.edu/sites/default/files/" + randomIntInc(1,6)+".png")
+            ])
+            .text("There are " + total_interpretations + " interpretations in total. Please click below to read more", 'Read more')
+            .buttons([
+                builder.CardAction.openUrl(session, "https://pmkb.weill.cornell.edu/search?utf8=✓&search=" + query.value.replace(" ", "+"), 'Read more')
+            ])
+            .tap(builder.CardAction.openUrl(session, "https://pmkb.weill.cornell.edu/search?utf8=✓&search=" + query.value.replace(" ", "+")))
+    ];
+}
