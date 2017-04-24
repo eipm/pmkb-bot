@@ -27,8 +27,7 @@ var connector = new builder.ChatConnector({
 var bot = new builder.UniversalBot(connector);
 server.post('/api/messages', connector.listen());
 
-var recognizer = new builder.LuisRecognizer('https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/40854c2f-ef7d-4b0a-9b8c-2423255f02d0?subscription-key=686d01692e8c47ec87bdc838e7e1a95f');
-
+var recognizer = new builder.LuisRecognizer(process.env.LUIS_URL);
 bot.recognizer(recognizer);
 
 // Config PMKB Client. The env variables are set in Azure.
