@@ -289,7 +289,7 @@ function makeInterpretationCards(interpretations, session, query, callback) {
   });
 
   total_interpretations = interpretations.length
-  max_cards = 10;
+  max_cards = 5;
   if (interpretations.length > max_cards) {
       interpretations = interpretations.slice(0, max_cards - 1);
       var total_cards = cards.concat(getReadMoreCard(session, query, total_interpretations))
