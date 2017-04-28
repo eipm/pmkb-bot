@@ -35,7 +35,7 @@ npm run startdev
 
 ### 2.1 Supported tags and respective `Dockerfile` links
 
--       [`latest` (*latest/Dockerfile*)](https://github.com/ElementoLab/pmkb-hackfest/blob/master/Dockerfile)
+- [`latest` (*latest/Dockerfile*)](https://github.com/ElementoLab/pmkb-hackfest/blob/master/Dockerfile)
 
 ### 2.2 Set Path of **ngrok** in bot emulator
 
@@ -56,6 +56,7 @@ node:7.7.4 npm start
 ```
 
 Where:
+
 - **${PORT}**: External docker port.
 - **${PATH_TO_ENV_FILE}**: Path to env file.
 - **${PATH}**: Path to project files.

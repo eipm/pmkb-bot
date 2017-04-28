@@ -11,8 +11,3 @@ PMKB bot for the [Precision Medicine Knowledge Base](https://pmkb.weill.cornell.
 ## Features
 
 - [LUIS](https://luis.ai)
-
-## Dependencies
-
-- Python 3.6
-- sox
