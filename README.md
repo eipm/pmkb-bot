@@ -2,7 +2,7 @@
 
 PMKB bot for the [Precision Medicine Knowledge Base](https://pmkb.weill.cornell.edu) using [Microsoft Bot Framework](https://dev.botframework.com/).
 
-[![Docker Automated build](https://img.shields.io/docker/automated/jrottenberg/ffmpeg.svg)](https://hub.docker.com/r/elementolab/pmkb-hackfest/) [![Docker Pulls](https://img.shields.io/docker/pulls/elementolab/pmkb-hackfest.svg)](https://hub.docker.com/r/elementolab/pmkb-hacfest/) [![Docker Stars](https://img.shields.io/docker/stars/elementolab/pmkb-hackfest.svg)](https://hub.docker.com/r/elementolab/pmkb-hackfest/)
+[![Docker Automated build](https://img.shields.io/docker/automated/jrottenberg/ffmpeg.svg)](https://hub.docker.com/r/elementolab/pmkb-bot/) [![Docker Pulls](https://img.shields.io/docker/pulls/elementolab/pmkb-bot.svg)](https://hub.docker.com/r/elementolab/pmkb-bot/) [![Docker Stars](https://img.shields.io/docker/stars/elementolab/pmkb-bot.svg)](https://hub.docker.com/r/elementolab/pmkb-bot/)
 
 [![PMKB Bot](/docs/images/PMKB_bot.png)](http://bots.botframework.com/bot?id=pmkb)
 
