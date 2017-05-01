@@ -9,6 +9,7 @@ PMKB bot for the [Precision Medicine Knowledge Base](https://pmkb.weill.cornell.
 - [1. Deploy on Localhost](docs/deployment_instructions.md#1-deploy-on-localhost)
 - [2. Deploy using Docker](docs/deployment_instructions.md#2-deploy-using-docker)
 - [3. Deploy to Azure](docs/deployment_instructions.md#3-deploy-to-azure)
+- [![Deploy to Azure](http://azuredeploy.net/deploybutton.png)](https://azuredeploy.net/)
 
 ## Editor Recommendations
 
@@ -17,3 +18,5 @@ PMKB bot for the [Precision Medicine Knowledge Base](https://pmkb.weill.cornell.
 ## Features
 
 - [LUIS](https://luis.ai)
+
+![PMKB Bot](/docs/images/PMKB_bot.png)
