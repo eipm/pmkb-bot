@@ -4,7 +4,7 @@ PMKB bot for the [Precision Medicine Knowledge Base](https://pmkb.weill.cornell.
 
 [![Docker Automated build](https://img.shields.io/docker/automated/jrottenberg/ffmpeg.svg)](https://hub.docker.com/r/elementolab/pmkb-hackfest/) [![Docker Pulls](https://img.shields.io/docker/pulls/elementolab/pmkb-hackfest.svg)](https://hub.docker.com/r/elementolab/pmkb-hacfest/) [![Docker Stars](https://img.shields.io/docker/stars/elementolab/pmkb-hackfest.svg)](https://hub.docker.com/r/elementolab/pmkb-hackfest/)
 
-![PMKB Bot](/docs/images/PMKB_bot.png)
+[![PMKB Bot](/docs/images/PMKB_bot.png)](http://bots.botframework.com/bot?id=pmkb)
 
 ## [Deployment Instructions](docs/deployment_instructions.md)
 
@@ -19,3 +19,7 @@ PMKB bot for the [Precision Medicine Knowledge Base](https://pmkb.weill.cornell.
 ## Features
 
 - [LUIS](https://luis.ai)
+
+## Demo
+
+[![PMKB Bot Demo](https://media.giphy.com/media/l0Iy1Rbs1TGPRwtj2/giphy.gif)](http://bots.botframework.com/bot?id=pmkb)
