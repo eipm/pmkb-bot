@@ -6,9 +6,9 @@ PMKB bot for the [Precision Medicine Knowledge Base](https://pmkb.weill.cornell.
 
 ## [Deployment Instructions]((docs/deployment_instructions.md)
 
-- [Deploy on Localhost](docs/deployment_instructions.md#1-deploy-on-localhost)
-- [![Deploy to Docker Cloud](https://files.cloud.docker.com/images/deploy-to-dockercloud.svg)](https://cloud.docker.com/stack/deploy/)
-- [![Deploy to Azure](http://azuredeploy.net/deploybutton.png)](https://azuredeploy.net/)
+- [1. Deploy on Localhost](docs/deployment_instructions.md#1-deploy-on-localhost)
+- [2. Deploy on Docker](docs/deployment_instructions.md#2-deploy-using-docker)
+- [3. Deploy on Azure](docs/deployment_instructions.md#3-deploy-to-azure)
 
 ## Editor Recommendations
 
