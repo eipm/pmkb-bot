@@ -1,8 +1,14 @@
-# PMKB HackFest
+# PMKB Bot
 
 PMKB bot for the [Precision Medicine Knowledge Base](https://pmkb.weill.cornell.edu) using [Microsoft Bot Framework](https://dev.botframework.com/).
 
+[![Docker Automated build](https://img.shields.io/docker/automated/jrottenberg/ffmpeg.svg)](https://hub.docker.com/r/elementolab/pmkb-hackfest/) [![Docker Pulls](https://img.shields.io/docker/pulls/elementolab/pmkb-hackfest.svg)](https://hub.docker.com/r/elementolab/pmkb-hacfest/) [![Docker Stars](https://img.shields.io/docker/stars/elementolab/pmkb-hackfest.svg)](https://hub.docker.com/r/elementolab/pmkb-hackfest/)
+
 ## [Deployment Instructions](docs/deployment_instructions.md)
+
+- [1. Deploy on Localhost](docs/deployment_instructions.md#1-deploy-on-localhost)
+- [2. Deploy using Docker](docs/deployment_instructions.md#2-deploy-using-docker)
+- [3. Deploy to Azure](docs/deployment_instructions.md#3-deploy-to-azure)
 
 ## Editor Recommendations
 
