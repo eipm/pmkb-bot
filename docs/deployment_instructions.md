@@ -1,9 +1,5 @@
 # Deployment Instructions
 
-- [1. Deploy on Localhost](#1-deploy-on-localhost)
-- [2. Deploy using Docker](#2-deploy-using-docker)
-- [3. Deploy to Azure](#3-deploy-to-azure)
-
 ## 1. Deploy on Localhost
 
 ### 1.1 Install Prerequisites
