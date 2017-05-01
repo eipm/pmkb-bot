@@ -4,11 +4,10 @@ PMKB bot for the [Precision Medicine Knowledge Base](https://pmkb.weill.cornell.
 
 [![Docker Automated build](https://img.shields.io/docker/automated/jrottenberg/ffmpeg.svg)](https://hub.docker.com/r/elementolab/pmkb-hackfest/) [![Docker Pulls](https://img.shields.io/docker/pulls/elementolab/pmkb-hackfest.svg)](https://hub.docker.com/r/elementolab/pmkb-hacfest/) [![Docker Stars](https://img.shields.io/docker/stars/elementolab/pmkb-hackfest.svg)](https://hub.docker.com/r/elementolab/pmkb-hackfest/)
 
-## Deployment Instructions
+## [Deployment Instructions]((docs/deployment_instructions.md)
 
-- [1. Deploy on Localhost](docs/deployment_instructions.md#1-deploy-on-localhost)
-- [2. Deploy using Docker](docs/deployment_instructions.md#2-deploy-using-docker)
-- [3. Deploy to Azure](docs/deployment_instructions.md#3-deploy-to-azure)
+- [Deploy on Localhost](docs/deployment_instructions.md#1-deploy-on-localhost)
+- [![Deploy to Docker Cloud](https://files.cloud.docker.com/images/deploy-to-dockercloud.svg)](https://cloud.docker.com/stack/deploy/)
 - [![Deploy to Azure](http://azuredeploy.net/deploybutton.png)](https://azuredeploy.net/)
 
 ## Editor Recommendations

@@ -28,6 +28,8 @@ npm run startdev
 
 ## 2. Deploy using docker
 
+[![Deploy to Docker Cloud](https://files.cloud.docker.com/images/deploy-to-dockercloud.svg)](#2-deploy-using-docker)
+
 ### 2.1 Supported tags and respective `Dockerfile` links
 
 - [`latest` (*latest/Dockerfile*)](https://github.com/ElementoLab/pmkb-hackfest/blob/master/Dockerfile)
