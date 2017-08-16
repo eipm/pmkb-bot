@@ -20,7 +20,7 @@
   "homepage": "https://github.com/ElementoLab/pmkb-hackfest#readme",
   "dependencies": {
     "async": "^2.2.0",
-    "botbuilder": "^3.7.0",
+    "botbuilder": "^3.9.0",
     "nconf": "^0.8.4",
     "needle": "^1.6.0",
     "node-dev": "^3.1.3",
