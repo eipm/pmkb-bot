@@ -1,10 +1,10 @@
 FROM node:7.7.4
-MAINTAINER Alexandros Sigaras <als2076@med.cornell.edu>
 #===============================#
 # Docker Image Configuration	#
 #===============================#
 LABEL Description="PMKB Bot" \
-		Vendor="Englander Institute for Precision Medicine"
+		Vendor="Englander Institute for Precision Medicine" \
+		maintainer="als2076@med.cornell.edu"
 WORKDIR /usr/src/app
 #===================================#
 # Install PMKB Bot Dependencies     #
