@@ -36,10 +36,10 @@ const pmkbClient = new PMKBClient(process.env.PMKB_HOST, process.env.PMKB_USER, 
 
 // Set up speech services
 const speechOptions = {
-    speechRecognizer: new CognitiveServices.SpeechRecognizer({ subscriptionKey: 'MICROSOFT_SPEECH_API_KEY' }),
+    speechRecognizer: new CognitiveServices.SpeechRecognizer({ subscriptionKey: process.env.MICROSOFT_SPEECH_API_KEY }),
     speechSynthesizer: new CognitiveServices.SpeechSynthesizer({
       gender: CognitiveServices.SynthesisGender.Female,
-      subscriptionKey: 'MICROSOFT_SPEECH_API_KEY',
+      subscriptionKey: process.env.MICROSOFT_SPEECH_API_KEY,
       voiceName: 'Microsoft Server Speech Text to Speech Voice (en-US, JessaRUS)'
     })
   };
