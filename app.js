@@ -15,7 +15,7 @@ var client = require('./lib/client');
 // Setup Restify Server
 var server = restify.createServer();
 server.listen(process.env.port || process.env.PORT || 3978, function () {
-   console.log('%s listening to %s', server.name, server.url);
+   console.log('%s listening to %s', server.name, server.url); 
 });
 
 // Create chat bot
@@ -33,16 +33,6 @@ bot.recognizer(recognizer);
 
 // Configure PMKB Client. ENV variables are stored in Azure.
 const pmkbClient = new PMKBClient(process.env.PMKB_HOST, process.env.PMKB_USER, process.env.PMKB_PASS);
-
-// Set up speech services
-const speechOptions = {
-    speechRecognizer: new CognitiveServices.SpeechRecognizer({ subscriptionKey: process.env.MICROSOFT_SPEECH_API_KEY }),
-    speechSynthesizer: new CognitiveServices.SpeechSynthesizer({
-      gender: CognitiveServices.SynthesisGender.Female,
-      subscriptionKey: process.env.MICROSOFT_SPEECH_API_KEY,
-      voiceName: 'Microsoft Server Speech Text to Speech Voice (en-US, JessaRUS)'
-    })
-  };
 
 //=========================================================
 // Bot Dialogs
@@ -64,7 +54,7 @@ bot.on('conversationUpdate', function (message) {
 });
 
 // Hello message
-bot.dialog('hello', [
+bot.dialog('hello', [ 
     function (session) {
         session.send(prompts.greetMsg);
         session.beginDialog('disclaimerStart');
@@ -136,7 +126,7 @@ bot.dialog('examples', [
                     ])
                     .tap(builder.CardAction.openUrl(session, url))
             ]);
-
+            
         var exampleCards = getExampleCardsAttachments();
         var reply = new builder.Message(session)
         .text('Examples')
@@ -234,7 +224,7 @@ bot.dialog('find gene',
         });
       });
     });
-  }).triggerAction({matches: "findGene"});
+  }).triggerAction({matches: "findGene"});  
 
 // List Genes Dialog
 bot.dialog('list genes', function (session) {
@@ -306,7 +296,7 @@ function makeInterpretationCards(interpretations, session, query, callback) {
       callback(null, total_cards);
   }
   else {
-    callback(null, cards);
+    callback(null, cards);    
   }
 }
 
