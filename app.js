@@ -7,6 +7,8 @@ const configs = require('./config/configs');
 const _ = require('underscore');
 var fs = require('fs');
 var client = require('./lib/client');
+var handlebars = require('node-handlebars');
+var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 
 //=========================================================
 // Bot Setup
@@ -33,16 +35,29 @@ bot.recognizer(recognizer);
 
 // Configure PMKB Client. ENV variables are stored in Azure.
 const pmkbClient = new PMKBClient(process.env.PMKB_HOST, process.env.PMKB_USER, process.env.PMKB_PASS);
+var path = __dirname + '/views';
+var views = handlebars.create({partialsDir: path});
 
-// Set up speech services
-const speechOptions = {
-    speechRecognizer: new CognitiveServices.SpeechRecognizer({ subscriptionKey: process.env.MICROSOFT_SPEECH_API_KEY }),
-    speechSynthesizer: new CognitiveServices.SpeechSynthesizer({
-      gender: CognitiveServices.SynthesisGender.Female,
-      subscriptionKey: process.env.MICROSOFT_SPEECH_API_KEY,
-      voiceName: 'Microsoft Server Speech Text to Speech Voice (en-US, JessaRUS)'
-    })
-  };
+server.get('/index.html', function (req, res) {
+  var url = 'https://webchat.botframework.com/api/tokens';
+  var botKey = "oFmCxJltuJU.cwA.A_E.xbjRjwnzhDBn2us7VUxJjB06KBJFuhaCfCwnq1fmYEo";
+  var speechKey = "b18ba8a2b7fe4cdba844422f95c4d600";
+  var token = getToken(url, botKey);
+  views.engine(path + '/index.html', {token: token, speechKey: speechKey}, function(err, html) {
+    if (err) {
+      throw err;
+    }
+    res.end(html);
+  });
+});
+
+function getToken(url, key) {
+     var xmlHttp = new XMLHttpRequest();
+     xmlHttp.open("GET", url, false); // false for synchronous request'
+     xmlHttp.setRequestHeader("Authorization", "BotConnector " + key );
+     xmlHttp.send(null);
+     return xmlHttp.responseText;
+}
 
 //=========================================================
 // Bot Dialogs
