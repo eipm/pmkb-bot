@@ -21,7 +21,6 @@
   "dependencies": {
     "async": "^2.2.0",
     "botbuilder": "^3.9.0",
-    "cognitive-services": "^1.1.0",
     "nconf": "^0.8.4",
     "needle": "^1.6.0",
     "node-dev": "^3.1.3",

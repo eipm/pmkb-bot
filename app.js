@@ -40,10 +40,10 @@ var views = handlebars.create({partialsDir: path});
 
 server.get('/index.html', function (req, res) {
   var url = 'https://webchat.botframework.com/api/tokens';
-  var botKey = "oFmCxJltuJU.cwA.A_E.xbjRjwnzhDBn2us7VUxJjB06KBJFuhaCfCwnq1fmYEo";
-  var speechKey = "b18ba8a2b7fe4cdba844422f95c4d600";
-  var token = getToken(url, botKey);
-  views.engine(path + '/index.html', {token: token, speechKey: speechKey}, function(err, html) {
+  var botKey = process.env.MICROSOFT_WEB_CHAT_SECRET_KEY;
+  var speechKey = process.env.MICROSOFT_SPEECH_API_KEY;
+  var botToken = getBotToken(url, botKey);
+  views.engine(path + '/index.html', {botToken: botToken, speechKey: speechKey}, function(err, html) {
     if (err) {
       throw err;
     }
@@ -51,12 +51,12 @@ server.get('/index.html', function (req, res) {
   });
 });
 
-function getToken(url, key) {
-     var xmlHttp = new XMLHttpRequest();
-     xmlHttp.open("GET", url, false); // false for synchronous request'
-     xmlHttp.setRequestHeader("Authorization", "BotConnector " + key );
-     xmlHttp.send(null);
-     return xmlHttp.responseText;
+function getBotToken(url, key) {
+  var xmlHttp = new XMLHttpRequest();
+  xmlHttp.open("GET", url, false); // false for synchronous request'
+  xmlHttp.setRequestHeader("Authorization", "BotConnector " + key);
+  xmlHttp.send(null);
+  return xmlHttp.responseText;
 }
 
 //=========================================================

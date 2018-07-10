@@ -9,15 +9,6 @@
           <link href="https://cdn.botframework.com/botframework-webchat/latest/botchat.css" rel="stylesheet" />
 
           <style>
-               .example {
-                    float: left;
-                    margin-right: 20px;
-                    width: 300px;
-               }
-
-               .example > h2 {
-                    font-family: 'Segoe UI';
-               }
 
                #BotChatGoesHere {
                     border: 1px solid #333;
@@ -26,15 +17,10 @@
                     position: relative;
                     width: 700px;
                }
+               
           </style>
      </head>
      <body>
-          <section class="example">
-               <h2>Web Chat with speech</h2>
-               <p>
-                    This sample shows the various options for enabling speech recognition and speech synthesis in the Web Chat
-               </p>
-          </section>
 
           <div id="BotChatGoesHere"></div>
 
@@ -55,7 +41,6 @@
                     name: params['PMKB'] || 'PMKB'
                };
 
-
                window.botchatDebug = params['debug'] && params['debug'] === 'true';
 
                const speechOptions = {
@@ -67,7 +52,6 @@
                     })
                };
 
-
                BotChat.App({
                     bot: bot,
                     locale: params['locale'],
@@ -77,7 +61,7 @@
 
                     directLine: {
                          domain: params['domain'],
-                         token: {{{token}}},
+                         token: {{{botToken}}},
                          webSocket: params['webSocket'] && params['webSocket'] === 'true' // defaults to true
                     }
                }, document.getElementById('BotChatGoesHere'));
