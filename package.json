@@ -24,9 +24,11 @@
     "nconf": "^0.8.4",
     "needle": "^1.6.0",
     "node-dev": "^3.1.3",
+    "node-handlebars": "^0.9.7",
     "request": "^2.81.0",
     "restify": "^4.3.0",
     "underscore": "^1.8.3",
-    "xmlbuilder": "^8.2.2"
+    "xmlbuilder": "^8.2.2",
+    "xmlhttprequest": "^1.8.0"
   }
 }

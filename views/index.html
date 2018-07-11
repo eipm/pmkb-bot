@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+
+<html>
+     <head>
+          <meta charset="UTF-8" />
+          <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+          <title>Bot Chat</title>
+
+          <link href="https://cdn.botframework.com/botframework-webchat/latest/botchat.css" rel="stylesheet" />
+
+          <style>
+
+               #BotChatGoesHere {
+                    border: 1px solid #333;
+                    float: left;
+                    height: 600px;
+                    position: relative;
+                    width: 700px;
+               }
+               
+          </style>
+     </head>
+     <body>
+
+          <div id="BotChatGoesHere"></div>
+
+          <script src="https://cdn.botframework.com/botframework-webchat/latest/botchat.js"></script>
+
+          <script src="https://cdn.botframework.com/botframework-webchat/latest/CognitiveServices.js"></script>
+
+          <script>
+               const params = BotChat.queryParams(location.search);
+
+               const user = {
+                    id: params['62qFYs1u4yD'] || '62qFYs1u4yD',
+                    name: params['You'] || 'You'
+               };
+
+               const bot = {
+                    id: params['pmkb'] || 'pmkb',
+                    name: params['PMKB'] || 'PMKB'
+               };
+
+               window.botchatDebug = params['debug'] && params['debug'] === 'true';
+
+               const speechOptions = {
+                    speechRecognizer: new CognitiveServices.SpeechRecognizer({ subscriptionKey: "{{{speechKey}}}" }),
+                    speechSynthesizer: new CognitiveServices.SpeechSynthesizer({
+                         gender: CognitiveServices.SynthesisGender.Female,
+                         subscriptionKey: "{{{speechKey}}}",
+                         voiceName: 'Microsoft Server Speech Text to Speech Voice (en-US, JessaRUS)'
+                    })
+               };
+
+               BotChat.App({
+                    bot: bot,
+                    locale: params['locale'],
+                    resize: 'detect',
+                    speechOptions: speechOptions,
+                    user: user,
+
+                    directLine: {
+                         domain: params['domain'],
+                         token: {{{botToken}}},
+                         webSocket: params['webSocket'] && params['webSocket'] === 'true' // defaults to true
+                    }
+               }, document.getElementById('BotChatGoesHere'));
+          </script>
+     </body>
+</html>
