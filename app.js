@@ -7,6 +7,8 @@ const configs = require('./config/configs');
 const _ = require('underscore');
 var fs = require('fs');
 var client = require('./lib/client');
+var handlebars = require('node-handlebars');
+var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 
 //=========================================================
 // Bot Setup
@@ -33,6 +35,29 @@ bot.recognizer(recognizer);
 
 // Configure PMKB Client. ENV variables are stored in Azure.
 const pmkbClient = new PMKBClient(process.env.PMKB_HOST, process.env.PMKB_USER, process.env.PMKB_PASS);
+var path = __dirname + '/views';
+var views = handlebars.create({partialsDir: path});
+
+server.get('/index.html', function (req, res) {
+  var url = 'https://webchat.botframework.com/api/tokens';
+  var botKey = process.env.MICROSOFT_WEB_CHAT_SECRET_KEY;
+  var speechKey = process.env.MICROSOFT_SPEECH_API_KEY;
+  var botToken = getBotToken(url, botKey);
+  views.engine(path + '/index.html', {botToken: botToken, speechKey: speechKey}, function(err, html) {
+    if (err) {
+      throw err;
+    }
+    res.end(html);
+  });
+});
+
+function getBotToken(url, key) {
+  var xmlHttp = new XMLHttpRequest();
+  xmlHttp.open("GET", url, false); // false for synchronous request'
+  xmlHttp.setRequestHeader("Authorization", "BotConnector " + key);
+  xmlHttp.send(null);
+  return xmlHttp.responseText;
+}
 
 //=========================================================
 // Bot Dialogs
