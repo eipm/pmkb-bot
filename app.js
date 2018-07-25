@@ -299,8 +299,6 @@ function makeQuery(luisResults, callback) {
       queryParams.push(entity.resolution.values[0]);
     }
   }
-  console.log('queryParams', queryParams);
-  console.log('query', queryParams.join(' '));
   return callback(null, {
     value: queryParams.join(' ')
   });
