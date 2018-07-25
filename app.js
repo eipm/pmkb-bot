@@ -10,8 +10,6 @@ var client = require('./lib/client');
 var handlebars = require('node-handlebars');
 var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 
-var inMemoryStorage = new builder.MemoryBotStorage();
-
 //=========================================================
 // Bot Setup
 //=========================================================
@@ -28,7 +26,7 @@ var connector = new builder.ChatConnector({
   appPassword: process.env.MICROSOFT_APP_PASSWORD
 });
 
-var bot = new builder.UniversalBot(connector).set('storage', inMemoryStorage);
+var bot = new builder.UniversalBot(connector).set('storage', new builder.MemoryBotStorage());
 server.post('/api/messages', connector.listen());
 
 // Configure LUIS recognizer. ENV variables are stored in Azure.
@@ -269,25 +267,25 @@ bot.dialog('list genes', function (session) {
 //=====================
 
 function makeQuery(luisResults, callback) {
-  const entities = luisResults.intent.entities;
-  queryParams = [];
-    if (checkEntitiesHaveBeenResolved(entities)) {
+  const queryParams = [];
+  if (luisResults && luisResults.intent) {
+    const entities = luisResults.intent.entities;
+    if (entities && entities.length) {
       for (let entity of entities) {
-        queryParams.push(entity.resolution.values[0]);
+        if (checkEntity(entity)) {
+          queryParams.push(entity.resolution.values[0]);
+        }
       }
     }
-    return callback(null, {
-      value: queryParams.join(' ')
-    });
+  }
+
+  return callback(null, {
+    value: queryParams.join(' ')
+  });
 }
 
-function checkEntitiesHaveBeenResolved(entities) {
-  for (var i = 0; i < entities.length; i++) {
-    if (!(entities.length && entities[i] && entities[i].resolution && entities[i].resolution.values.length > 0)) {
-      return false
-    }
-  }
-  return true
+function checkEntity(entity) {
+  return entity && entity.resolution && entity.resolution.values.length;
 }
 
 function makeInterpretationCards(interpretations, session, query, callback) {
