@@ -17,7 +17,7 @@ var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 // Setup Restify Server
 var server = restify.createServer();
 server.listen(process.env.port || process.env.PORT || 3978, function () {
-   console.log('%s listening to %s', server.name, server.url); 
+   console.log('%s listening to %s', server.name, server.url);
 });
 
 // Create chat bot
@@ -26,7 +26,7 @@ var connector = new builder.ChatConnector({
   appPassword: process.env.MICROSOFT_APP_PASSWORD
 });
 
-var bot = new builder.UniversalBot(connector);
+var bot = new builder.UniversalBot(connector).set('storage', new builder.MemoryBotStorage());
 server.post('/api/messages', connector.listen());
 
 // Configure LUIS recognizer. ENV variables are stored in Azure.
@@ -79,7 +79,7 @@ bot.on('conversationUpdate', function (message) {
 });
 
 // Hello message
-bot.dialog('hello', [ 
+bot.dialog('hello', [
     function (session) {
         session.send(prompts.greetMsg);
         session.beginDialog('disclaimerStart');
@@ -151,7 +151,7 @@ bot.dialog('examples', [
                     ])
                     .tap(builder.CardAction.openUrl(session, url))
             ]);
-            
+
         var exampleCards = getExampleCardsAttachments();
         var reply = new builder.Message(session)
         .text('Examples')
@@ -249,7 +249,7 @@ bot.dialog('find gene',
         });
       });
     });
-  }).triggerAction({matches: "findGene"});  
+  }).triggerAction({matches: "findGene"});
 
 // List Genes Dialog
 bot.dialog('list genes', function (session) {
@@ -267,29 +267,30 @@ bot.dialog('list genes', function (session) {
 //=====================
 
 function makeQuery(luisResults, callback) {
-  const entities = luisResults.intent.entities;
-  const geneNames = _.filter(entities, function (entity) {
-    return entity.type === 'Gene';
-  });
-  const mutations = _.filter(entities, function (entity) {
-    return entity.type === 'variant';
-  });
-  const geneName = geneNames.length && geneNames[0].entity;
-  const mutation = mutations.length && mutations[0].entity;
-  if (!geneName) return callback(new Error(prompts.errorMsg));
-  let query = geneName;
-  if (mutation) query += ' ' + mutation;
+  const queryParams = [];
+  if (luisResults && luisResults.intent) {
+    const entities = luisResults.intent.entities;
+    if (entities && entities.length) {
+      for (let entity of entities) {
+        if (checkEntity(entity)) {
+          queryParams.push(entity.resolution.values[0]);
+        }
+      }
+    }
+  }
+
   return callback(null, {
-    value: query,
-    gene: geneName,
-    mutation: mutation
+    value: queryParams.join(' ')
   });
+}
+
+function checkEntity(entity) {
+  return entity && entity.resolution && entity.resolution.values.length;
 }
 
 function makeInterpretationCards(interpretations, session, query, callback) {
   const interpretationUrlBase = "https://pmkb.weill.cornell.edu" + '/therapies/';
-  mainGene = query.gene.toUpperCase();
-  let parts = _.partition(interpretations, (i) => i.gene.name === mainGene);
+  let parts = _.partition(interpretations, (i) => i.gene.name === query);
   interpretations = parts[0].concat(parts[1]);  // Place most relevant genes first
 
   const cards = _.map(interpretations, function (i) {
@@ -321,7 +322,7 @@ function makeInterpretationCards(interpretations, session, query, callback) {
       callback(null, total_cards);
   }
   else {
-    callback(null, cards);    
+    callback(null, cards);
   }
 }
 
