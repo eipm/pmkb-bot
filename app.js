@@ -282,7 +282,12 @@ function makeQuery(luisResults, callback) {
 }
 
 function checkEntitiesHaveBeenResolved(entities) {
-  return entities.length && entities[0] && entities[0].resolution && entities[0].resolution.values.length > 0;
+  for (var i = 0; i < entities.length; i++) {
+    if (!(entities.length && entities[i] && entities[i].resolution && entities[i].resolution.values.length > 0)) {
+      return false
+    }
+  }
+  return true
 }
 
 function makeInterpretationCards(interpretations, session, query, callback) {
