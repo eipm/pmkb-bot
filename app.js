@@ -35,6 +35,10 @@ const pmkbClient = new PMKBClient(process.env.PMKB_HOST, process.env.PMKB_USER, 
 var path = __dirname + '/views';
 var views = handlebars.create({partialsDir: path});
 
+server.get(/\/assets\/?.*/, restify.serveStatic({
+  directory: __dirname
+}));
+
 server.get('/index.html', function (req, res) {
   var url = 'https://webchat.botframework.com/api/tokens';
   var botKey = process.env.MICROSOFT_WEB_CHAT_SECRET_KEY;
