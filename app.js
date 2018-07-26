@@ -3,10 +3,7 @@ var builder = require('botbuilder');
 var prompts = require('./prompts');
 const PMKBClient = require('./lib/pmkbClient');
 const async = require('async');
-const configs = require('./config/configs');
 const _ = require('underscore');
-var fs = require('fs');
-var client = require('./lib/client');
 var handlebars = require('node-handlebars');
 var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 
@@ -37,6 +34,10 @@ bot.recognizer(recognizer);
 const pmkbClient = new PMKBClient(process.env.PMKB_HOST, process.env.PMKB_USER, process.env.PMKB_PASS);
 var path = __dirname + '/views';
 var views = handlebars.create({partialsDir: path});
+
+server.get(/\/assets\/?.*/, restify.serveStatic({
+  directory: __dirname
+}));
 
 server.get('/index.html', function (req, res) {
   var url = 'https://webchat.botframework.com/api/tokens';
