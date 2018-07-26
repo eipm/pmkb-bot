@@ -11,6 +11,7 @@ var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 // Bot Setup
 //=========================================================
 
+var host = process.env.HOST;
 var pmkb_host = process.env.PMKB_HOST;
 
 // Setup Restify Server
@@ -100,7 +101,7 @@ bot.dialog('disclaimerStart', [
                     .subtitle("PMKB Bot")
                     .text(prompts.disclaimerMsg)
                     .images([
-                        builder.CardImage.create(session, pmkb_host + "/assets/eipm.png")
+                        builder.CardImage.create(session, host + "/assets/eipm.png")
                     ])
                     .buttons([
                         builder.CardAction.openUrl(session, pmkb_host, 'Visit Website')
@@ -122,7 +123,7 @@ bot.dialog('getStarted', [
                     .subtitle("Getting Started")
                     .text(prompts.gettingStartedMsg)
                     .images([
-                        builder.CardImage.create(session, pmkb_host + "/assets/pmkb.png")
+                        builder.CardImage.create(session, host + "/assets/pmkb.png")
                     ])
                     .buttons([
                         builder.CardAction.imBack(session, "examples", 'Show me Examples'),
@@ -144,7 +145,7 @@ bot.dialog('examples', [
                     .subtitle("Examples")
                     .text(prompts.gettingStartedMsg)
                     .images([
-                        builder.CardImage.create(session, pmkb_host + "/assets/pmkb.png")
+                        builder.CardImage.create(session, host + "/assets/pmkb.png")
                     ])
                     .buttons([
                         builder.CardAction.imBack(session, "examples", 'Show me Examples')
@@ -173,7 +174,7 @@ bot.dialog('disclaimer', [
                     .subtitle("PMKB Bot")
                     .text(prompts.disclaimerMsg)
                     .images([
-                        builder.CardImage.create(session, pmkb_host + "/assets/eipm.png")
+                        builder.CardImage.create(session, host + "/assets/eipm.png")
                     ])
                     .buttons([
                         builder.CardAction.openUrl(session, pmkb_host, 'Visit Website')
@@ -195,7 +196,7 @@ bot.dialog('about', [
                     .subtitle("About")
                     .text(prompts.gettingStartedMsg)
                     .images([
-                        builder.CardImage.create(session, pmkb_host + "/assets/pmkb.png")
+                        builder.CardImage.create(session, host + "/assets/pmkb.png")
                     ])
                     .buttons([
                         builder.CardAction.openUrl(session, pmkb_host, 'Visit Website')
@@ -304,7 +305,7 @@ function makeInterpretationCards(interpretations, session, query, callback) {
       .subtitle(subtitle)
       .text(i.interpretation)
       .images([
-        builder.CardImage.create(session, pmkb_host + "/assets/cards/" + randomIntInc(1, 6) + ".png")
+        builder.CardImage.create(session, host + "/assets/cards/" + randomIntInc(1, 6) + ".png")
       ])
       .buttons([
         builder.CardAction.openUrl(session, interpretationUrl, 'Read more')
@@ -333,7 +334,7 @@ function getExampleCardsAttachments(session) {
         new builder.HeroCard(session)
             .title('Find EGFR')
             .images([
-                builder.CardImage.create(session, pmkb_host + "/assets/cards/" + randomIntInc(1,6) + ".png")
+                builder.CardImage.create(session, host + "/assets/cards/" + randomIntInc(1,6) + ".png")
             ])
             .buttons([
                 builder.CardAction.imBack(session, "Find EGFR", 'Try It')
@@ -342,7 +343,7 @@ function getExampleCardsAttachments(session) {
         new builder.HeroCard(session)
             .title('Find BRAF V600E')
             .images([
-                builder.CardImage.create(session, pmkb_host + "/assets/cards/" + randomIntInc(1,6) + ".png")
+                builder.CardImage.create(session, host + "/assets/cards/" + randomIntInc(1,6) + ".png")
             ])
             .buttons([
                 builder.CardAction.imBack(session, "Find BRAF V600E", 'Try It')
@@ -351,7 +352,7 @@ function getExampleCardsAttachments(session) {
         new builder.HeroCard(session)
             .title('Find prostate cancer')
             .images([
-                builder.CardImage.create(session, pmkb_host + "/assets/cards/" + randomIntInc(1,6) + ".png")
+                builder.CardImage.create(session, host + "/assets/cards/" + randomIntInc(1,6) + ".png")
             ])
             .buttons([
                 builder.CardAction.imBack(session, "Find prostate cancer", 'Try It')
@@ -360,7 +361,7 @@ function getExampleCardsAttachments(session) {
         new builder.HeroCard(session)
             .title('Find BRAF')
             .images([
-                builder.CardImage.create(session, pmkb_host + "/assets/cards/" + randomIntInc(1,6) + ".png")
+                builder.CardImage.create(session, host + "/assets/cards/" + randomIntInc(1,6) + ".png")
             ])
             .buttons([
                 builder.CardAction.imBack(session, "Find BRAF", 'Try It')
@@ -373,7 +374,7 @@ function getReadMoreCard(session, query, total_interpretations) {
         new builder.HeroCard(session)
             .title('Interpretations for ' +  query.value)
             .images([
-                builder.CardImage.create(session, pmkb_host + "/assets/cards/" + randomIntInc(1,6) + ".png")
+                builder.CardImage.create(session, host + "/assets/cards/" + randomIntInc(1,6) + ".png")
             ])
             .text("There are " + total_interpretations + " interpretations in total. Please click below to read more", 'Read more')
             .buttons([
