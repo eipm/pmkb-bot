@@ -3,10 +3,7 @@ var builder = require('botbuilder');
 var prompts = require('./prompts');
 const PMKBClient = require('./lib/pmkbClient');
 const async = require('async');
-const configs = require('./config/configs');
 const _ = require('underscore');
-var fs = require('fs');
-var client = require('./lib/client');
 var handlebars = require('node-handlebars');
 var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 
