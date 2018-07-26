@@ -3,7 +3,10 @@ var builder = require('botbuilder');
 var prompts = require('./prompts');
 const PMKBClient = require('./lib/pmkbClient');
 const async = require('async');
+const configs = require('./config/configs');
 const _ = require('underscore');
+var fs = require('fs');
+var client = require('./lib/client');
 var handlebars = require('node-handlebars');
 var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 
@@ -34,10 +37,6 @@ bot.recognizer(recognizer);
 const pmkbClient = new PMKBClient(process.env.PMKB_HOST, process.env.PMKB_USER, process.env.PMKB_PASS);
 var path = __dirname + '/views';
 var views = handlebars.create({partialsDir: path});
-
-server.get(/\/assets\/?.*/, restify.serveStatic({
-  directory: __dirname
-}));
 
 server.get('/index.html', function (req, res) {
   var url = 'https://webchat.botframework.com/api/tokens';
@@ -99,7 +98,7 @@ bot.dialog('disclaimerStart', [
                     .subtitle("PMKB Bot")
                     .text(prompts.disclaimerMsg)
                     .images([
-                        builder.CardImage.create(session, "assets/eipm.png")
+                        builder.CardImage.create(session, "http://ipm.weill.cornell.edu/sites/default/files/logo_englander_2line_rgb_comp_1.jpg")
                     ])
                     .buttons([
                         builder.CardAction.openUrl(session, url, 'Visit Website')
@@ -122,7 +121,7 @@ bot.dialog('getStarted', [
                     .subtitle("Getting Started")
                     .text(prompts.gettingStartedMsg)
                     .images([
-                        builder.CardImage.create(session, "assets/pmkb.png")
+                        builder.CardImage.create(session, "https://pbs.twimg.com/profile_banners/759029706360578048/1469801979/1500x500")
                     ])
                     .buttons([
                         builder.CardAction.imBack(session, "examples", 'Show me Examples'),
@@ -145,7 +144,7 @@ bot.dialog('examples', [
                     .subtitle("Examples")
                     .text(prompts.gettingStartedMsg)
                     .images([
-                        builder.CardImage.create(session, "assets/pmkb.png")
+                        builder.CardImage.create(session, "https://pbs.twimg.com/profile_banners/759029706360578048/1469801979/1500x500")
                     ])
                     .buttons([
                         builder.CardAction.imBack(session, "examples", 'Show me Examples')
@@ -175,7 +174,7 @@ bot.dialog('disclaimer', [
                     .subtitle("PMKB Bot")
                     .text(prompts.disclaimerMsg)
                     .images([
-                        builder.CardImage.create(session, "assets/eipm.png")
+                        builder.CardImage.create(session, "http://ipm.weill.cornell.edu/sites/default/files/logo_englander_2line_rgb_comp_1.jpg")
                     ])
                     .buttons([
                         builder.CardAction.openUrl(session, url, 'Visit Website')
@@ -198,7 +197,7 @@ bot.dialog('about', [
                     .subtitle("About")
                     .text(prompts.gettingStartedMsg)
                     .images([
-                        builder.CardImage.create(session, "assets/pmkb.png")
+                        builder.CardImage.create(session, "https://pbs.twimg.com/profile_banners/759029706360578048/1469801979/1500x500")
                     ])
                     .buttons([
                         builder.CardAction.openUrl(session, url, 'Visit Website')
@@ -307,7 +306,7 @@ function makeInterpretationCards(interpretations, session, query, callback) {
       .subtitle(subtitle)
       .text(i.interpretation)
       .images([
-        builder.CardImage.create(session, "assets/cards/" + randomIntInc(1, 6) + ".png")
+        builder.CardImage.create(session, "https://ipm.weill.cornell.edu/sites/default/files/" + randomIntInc(1, 6) + ".png")
       ])
       .buttons([
         builder.CardAction.openUrl(session, interpretationUrl, 'Read more')
@@ -336,7 +335,7 @@ function getExampleCardsAttachments(session) {
         new builder.HeroCard(session)
             .title('Find EGFR')
             .images([
-                builder.CardImage.create(session, "assets/cards/" + randomIntInc(1,6) + ".png")
+                builder.CardImage.create(session, "https://ipm.weill.cornell.edu/sites/default/files/" + randomIntInc(1,6)+".png")
             ])
             .buttons([
                 builder.CardAction.imBack(session, "Find EGFR", 'Try It')
@@ -345,7 +344,7 @@ function getExampleCardsAttachments(session) {
         new builder.HeroCard(session)
             .title('Find BRAF V600E')
             .images([
-                builder.CardImage.create(session, "assets/cards/" + randomIntInc(1,6) + ".png")
+                builder.CardImage.create(session, "https://ipm.weill.cornell.edu/sites/default/files/" + randomIntInc(1,6)+".png")
             ])
             .buttons([
                 builder.CardAction.imBack(session, "Find BRAF V600E", 'Try It')
@@ -354,7 +353,7 @@ function getExampleCardsAttachments(session) {
         new builder.HeroCard(session)
             .title('Find prostate cancer')
             .images([
-                builder.CardImage.create(session, "assets/cards/" + randomIntInc(1,6) + ".png")
+                builder.CardImage.create(session, "https://ipm.weill.cornell.edu/sites/default/files/" + randomIntInc(1,6)+".png")
             ])
             .buttons([
                 builder.CardAction.imBack(session, "Find prostate cancer", 'Try It')
@@ -363,7 +362,7 @@ function getExampleCardsAttachments(session) {
         new builder.HeroCard(session)
             .title('Find BRAF')
             .images([
-                builder.CardImage.create(session, "assets/cards/" + randomIntInc(1,6) + ".png")
+                builder.CardImage.create(session, "https://ipm.weill.cornell.edu/sites/default/files/" + randomIntInc(1,6)+".png")
             ])
             .buttons([
                 builder.CardAction.imBack(session, "Find BRAF", 'Try It')
@@ -376,7 +375,7 @@ function getReadMoreCard(session, query, total_interpretations) {
         new builder.HeroCard(session)
             .title('Interpretations for ' +  query.value)
             .images([
-                builder.CardImage.create(session, "assets/cards/" + randomIntInc(1,6) + ".png")
+                builder.CardImage.create(session, "https://ipm.weill.cornell.edu/sites/default/files/" + randomIntInc(1,6)+".png")
             ])
             .text("There are " + total_interpretations + " interpretations in total. Please click below to read more", 'Read more')
             .buttons([
