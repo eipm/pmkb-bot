@@ -198,7 +198,7 @@ bot.dialog('about', [
                     .subtitle("About")
                     .text(prompts.gettingStartedMsg)
                     .images([
-                        builder.CardImage.create(session, "assets/banner.png")
+                        builder.CardImage.create(session, "assets/pmkb.png")
                     ])
                     .buttons([
                         builder.CardAction.openUrl(session, url, 'Visit Website')
