@@ -1,4 +1,4 @@
-FROM node:10.7.0-stretch
+FROM node:8.6.0
 #===============================#
 # Docker Image Configuration	#
 #===============================#
