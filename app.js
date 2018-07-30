@@ -118,17 +118,7 @@ bot.dialog('getStarted', [
     function (session) {
         var msg = new builder.Message(session)
             .attachments([
-                new builder.HeroCard(session)
-                    .title("PMKB Bot")
-                    .subtitle("Getting Started")
-                    .text(prompts.gettingStartedMsg)
-                    .images([
-                        builder.CardImage.create(session, host + "/assets/pmkb.png")
-                    ])
-                    .buttons([
-                        builder.CardAction.imBack(session, "examples", 'Show me Examples'),
-                    ])
-                    .tap(builder.CardAction.openUrl(session, pmkb_host))
+                makeHeroCard(session, "PMKB Bot", host + "/assets/pmkb.png", "examples", 'Show Me Examples', url, "Getting Started", prompts.gettingStartedMsg)
             ]);
         session.endDialog(msg);
     }
@@ -140,17 +130,7 @@ bot.dialog('examples', [
         var msg = new builder.Message(session)
             .textFormat(builder.TextFormat.xml)
             .attachments([
-                new builder.HeroCard(session)
-                    .title("PMKB Bot")
-                    .subtitle("Examples")
-                    .text(prompts.gettingStartedMsg)
-                    .images([
-                        builder.CardImage.create(session, host + "/assets/pmkb.png")
-                    ])
-                    .buttons([
-                        builder.CardAction.imBack(session, "examples", 'Show me Examples')
-                    ])
-                    .tap(builder.CardAction.openUrl(session, pmkb_host))
+                makeHeroCard(session, "PMKB Bot", host + "/assets/pmkb.png", "examples", 'Show Me Examples', url, "Examples", prompts.gettingStartedMsg)
             ]);
 
         var exampleCards = getExampleCardsAttachments();
@@ -191,17 +171,7 @@ bot.dialog('about', [
         var msg = new builder.Message(session)
             .textFormat(builder.TextFormat.xml)
             .attachments([
-                new builder.HeroCard(session)
-                    .title("PMKB Bot")
-                    .subtitle("About")
-                    .text(prompts.gettingStartedMsg)
-                    .images([
-                        builder.CardImage.create(session, host + "/assets/pmkb.png")
-                    ])
-                    .buttons([
-                        builder.CardAction.openUrl(session, pmkb_host, 'Visit Website')
-                    ])
-                    .tap(builder.CardAction.openUrl(session, pmkb_host))
+                makeHeroCard(session, "PMKB Bot", host + "/assets/pmkb.png", pmkb_host, 'Visit Website', url, "About", prompts.gettingStartedMsg)
             ]);
         session.endDialog(msg);
     }
@@ -264,6 +234,34 @@ bot.dialog('list genes', function (session) {
 //=====================
 // Helper functions
 //=====================
+function makeHeroCard(session, title, imagePath, buttonCardTitle, buttonTitle, link, subtitle, text) {
+  if (link === undefined && subtitle === undefined && text === undefined) {
+    return new builder.HeroCard(session)
+    .title(title)
+    .images([
+      builder.CardImage.create(session, imagePath)
+    ])
+    .buttons([
+      builder.CardAction.imBack(session, buttonCardTitle, buttonTitle)
+    ])
+  } else {
+    return new builder.HeroCard(session)
+    .title(title)
+    .subtitle(subtitle)
+    .text(text)
+    .images([
+      builder.CardImage.create(session, imagePath)
+    ])
+    .buttons([
+      builder.CardAction.imBack(session, buttonCardTitle, buttonTitle)
+    ])
+    .tap(builder.CardAction.openUrl(session, link));
+  }
+}
+
+function makeRandomStockImagePath() {
+  return host + "/assets/cards/" + randomIntInc(1, 6) + ".png";
+}
 
 function makeQuery(luisResults, callback) {
   const queryParams = [];
@@ -300,17 +298,7 @@ function makeInterpretationCards(interpretations, session, query, callback) {
       .replace('{tumors}', getNames(i.tumors))
       .replace('{tissues}', getNames(i.tissues))
       .replace('{variants}', getNames(i.variants));
-    return new builder.HeroCard(session)
-      .title(title)
-      .subtitle(subtitle)
-      .text(i.interpretation)
-      .images([
-        builder.CardImage.create(session, host + "/assets/cards/" + randomIntInc(1, 6) + ".png")
-      ])
-      .buttons([
-        builder.CardAction.openUrl(session, interpretationUrl, 'Read more')
-      ])
-      .tap(builder.CardAction.openUrl(session, interpretationUrl));
+    makeHeroCard(session, title, subtitle, i.interpretation, makeRandomStockImagePath(), interpretationUrl, 'Read more', interpretationUrl)
   });
 
   total_interpretations = interpretations.length
@@ -331,41 +319,10 @@ function randomIntInc(low, high) {
 
 function getExampleCardsAttachments(session) {
     return [
-        new builder.HeroCard(session)
-            .title('Find EGFR')
-            .images([
-                builder.CardImage.create(session, host + "/assets/cards/" + randomIntInc(1,6) + ".png")
-            ])
-            .buttons([
-                builder.CardAction.imBack(session, "Find EGFR", 'Try It')
-            ]),
-
-        new builder.HeroCard(session)
-            .title('Find BRAF V600E')
-            .images([
-                builder.CardImage.create(session, host + "/assets/cards/" + randomIntInc(1,6) + ".png")
-            ])
-            .buttons([
-                builder.CardAction.imBack(session, "Find BRAF V600E", 'Try It')
-            ]),
-
-        new builder.HeroCard(session)
-            .title('Find prostate cancer')
-            .images([
-                builder.CardImage.create(session, host + "/assets/cards/" + randomIntInc(1,6) + ".png")
-            ])
-            .buttons([
-                builder.CardAction.imBack(session, "Find prostate cancer", 'Try It')
-            ]),
-
-        new builder.HeroCard(session)
-            .title('Find BRAF')
-            .images([
-                builder.CardImage.create(session, host + "/assets/cards/" + randomIntInc(1,6) + ".png")
-            ])
-            .buttons([
-                builder.CardAction.imBack(session, "Find BRAF", 'Try It')
-            ])
+        makeHeroCard(session, 'Find EGFR', makeRandomStockImagePath(), "Find EGFR", 'Try It'),
+        makeHeroCard(session, 'Find BRAF V600E', makeRandomStockImagePath(), "Find BRAF V600E", 'Try It'),
+        makeHeroCard(session, 'Find prostate cancer', makeRandomStockImagePath(), "Find prostate cancer", 'Try It'),
+        makeHeroCard(session, 'Find BRAF', makeRandomStockImagePath(), "Find BRAF", 'Try It')
     ];
 }
 
