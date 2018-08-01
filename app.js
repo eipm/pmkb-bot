@@ -302,7 +302,6 @@ function makeInterpretationCards(interpretations, session, query, callback) {
   const interpretationUrlBase = pmkb_host + '/therapies/';
   let parts = _.partition(interpretations, (i) => i.gene.name === query);
   interpretations = parts[0].concat(parts[1]);  // Place most relevant genes first
-  console.log(query);
   const cards = _.map(interpretations, function (i) {
     const interpretationUrl = interpretationUrlBase + i.id;
     const title = 'Interpretation for ' + query.value;
