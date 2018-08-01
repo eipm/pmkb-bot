@@ -208,10 +208,11 @@ bot.dialog('find gene',
       pmkbClient.searchInterpretations(query.value, function (err, interpretations) {
         if (err)
           return session.send(err.message);
-        console.log(query)
+        if (query.value == '')
+          session.beginDialog('unknown entity');
         makeInterpretationCards(interpretations, session, query, function (err, cards) {
           let reply = new builder.Message(session)
-            .text('Found ' + interpretations.length + ' interpretations for ' + query.value)
+            .text('Found ' + interpretations.length + ' interpretations associated with ' + "\"" + session.message.text + "\"")
             .attachmentLayout(builder.AttachmentLayout.carousel)
             .attachments(cards);
           session.endDialog(reply);
@@ -219,6 +220,18 @@ bot.dialog('find gene',
       });
     });
   }).triggerAction({matches: "findGene"});
+
+bot.dialog('none', [
+  function (session) {
+    session.endDialog(prompts.errorMsg);
+  }
+]).triggerAction({matches: "None"});
+
+bot.dialog('unknown entity', [
+ function (session) {
+     session.endDialog(prompts.errorMsg);
+ }
+]);
 
 // List Genes Dialog
 bot.dialog('list genes', function (session) {
@@ -274,11 +287,6 @@ function makeQuery(luisResults, callback) {
         }
       }
     }
-    if (luisResults.intent == "None" || queryParams == []) {
-      return callback(null, {
-         value: prompts.errorMsg
-      });
-    }
   }
 
   return callback(null, {
@@ -294,19 +302,16 @@ function makeInterpretationCards(interpretations, session, query, callback) {
   const interpretationUrlBase = pmkb_host + '/therapies/';
   let parts = _.partition(interpretations, (i) => i.gene.name === query);
   interpretations = parts[0].concat(parts[1]);  // Place most relevant genes first
-
+  console.log(query);
   const cards = _.map(interpretations, function (i) {
     const interpretationUrl = interpretationUrlBase + i.id;
-    const title = 'Interpretation for ' + query;
+    const title = 'Interpretation for ' + query.value;
     const getNames = (objs) => _.map(objs, (obj) => obj.name);
-    const tumors = getNames(i.tumors);
-    const tissues = getNames(i.tissues);
-    const variants = getNames(i.variants);
-    const subtitle = "Tumors: " + tumors + "<br/>" + "Tissues:" + tissues + "<br/>" + "Variants: " + variants;
-      // .replace('{tumors}', getNames(i.tumors) + "\n\n"
-      // .replace('{tissues}', getNames(i.tissues) + "\n\n"
-      // .replace('{variants}', getNames(i.variants));
-    makeHeroCard(session, title, makeRandomStockImagePath(), interpretationUrl, 'Read more', interpretationUrl, subtitle, i.interpretation);
+    const tumors = getNames(i.tumors).join(", ");
+    const tissues = getNames(i.tissues).join(", ");
+    const variants = getNames(i.variants).join(", ");
+    const subtitle = "Tumors: " + tumors + "<br/><br/>" + "Tissues: " + tissues + "<br/><br/>" + "Variants: " + variants;
+    return makeHeroCard(session, title, makeRandomStockImagePath(), interpretationUrl, 'Read more', interpretationUrl, subtitle, i.interpretation);
   });
 
   total_interpretations = interpretations.length
