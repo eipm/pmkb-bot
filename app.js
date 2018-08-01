@@ -248,27 +248,28 @@ bot.dialog('list genes', function (session) {
 // Helper functions
 //=====================
 function makeHeroCard(session, title, imagePath, buttonCardTitle, buttonTitle, link, subtitle, text) {
-  if (link === undefined && subtitle === undefined && text === undefined) {
-    return new builder.HeroCard(session)
-    .title(title)
-    .images([
-      builder.CardImage.create(session, imagePath)
-    ])
-    .buttons([
-      builder.CardAction.imBack(session, buttonCardTitle, buttonTitle)
-    ])
-  } else {
+  if (link && subtitle && text) {
     return new builder.HeroCard(session)
     .title(title)
     .subtitle(subtitle)
     .text(text)
     .images([
-      builder.CardImage.create(session, imagePath)
+     builder.CardImage.create(session, imagePath)
     ])
     .buttons([
-      builder.CardAction.imBack(session, buttonCardTitle, buttonTitle)
+    builder.CardAction.imBack(session, buttonCardTitle, buttonTitle)
     ])
     .tap(builder.CardAction.openUrl(session, link));
+
+  } else {
+    return new builder.HeroCard(session)
+    .title(title)
+    .images([
+    builder.CardImage.create(session, imagePath)
+    ])
+    .buttons([
+    builder.CardAction.imBack(session, buttonCardTitle, buttonTitle)
+    ])
   }
 }
 
