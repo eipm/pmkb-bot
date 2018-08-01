@@ -208,15 +208,17 @@ bot.dialog('find gene',
       pmkbClient.searchInterpretations(query.value, function (err, interpretations) {
         if (err)
           return session.send(err.message);
-        if (!query || !query.value || query.value == '')
+        if (query && query.value && !(query.value === '')) {
+          makeInterpretationCards(interpretations, session, query, function (err, cards) {
+            let reply = new builder.Message(session)
+              .text(`Found ${interpretations.length} interpretations associated with "${session.message.text}"`)
+              .attachmentLayout(builder.AttachmentLayout.carousel)
+              .attachments(cards);
+            session.endDialog(reply);
+          });
+        } else {
           session.beginDialog('unknown entity');
-        makeInterpretationCards(interpretations, session, query, function (err, cards) {
-          let reply = new builder.Message(session)
-            .text(`Found ${interpretations.length} interpretations associated with "${session.message.text}"`)
-            .attachmentLayout(builder.AttachmentLayout.carousel)
-            .attachments(cards);
-          session.endDialog(reply);
-        });
+        }
       });
     });
   }).triggerAction({matches: "findGene"});
@@ -228,9 +230,9 @@ bot.dialog('none', [
 ]).triggerAction({matches: "None"});
 
 bot.dialog('unknown entity', [
- function (session) {
-     session.endDialog(prompts.errorMsg);
- }
+  function (session) {
+    session.endDialog(prompts.errorMsg);
+  }
 ]);
 
 // List Genes Dialog
@@ -250,26 +252,25 @@ bot.dialog('list genes', function (session) {
 function makeHeroCard(session, title, imagePath, buttonCardTitle, buttonTitle, link, subtitle, text) {
   if (link && subtitle && text) {
     return new builder.HeroCard(session)
-    .title(title)
-    .subtitle(subtitle)
-    .text(text)
-    .images([
-     builder.CardImage.create(session, imagePath)
-    ])
-    .buttons([
-    builder.CardAction.imBack(session, buttonCardTitle, buttonTitle)
-    ])
-    .tap(builder.CardAction.openUrl(session, link));
-
+      .title(title)
+      .subtitle(subtitle)
+      .text(text)
+      .images([
+        builder.CardImage.create(session, imagePath)
+      ])
+      .buttons([
+        builder.CardAction.imBack(session, buttonCardTitle, buttonTitle)
+      ])
+      .tap(builder.CardAction.openUrl(session, link));
   } else {
     return new builder.HeroCard(session)
-    .title(title)
-    .images([
-    builder.CardImage.create(session, imagePath)
-    ])
-    .buttons([
-    builder.CardAction.imBack(session, buttonCardTitle, buttonTitle)
-    ])
+      .title(title)
+      .images([
+        builder.CardImage.create(session, imagePath)
+      ])
+      .buttons([
+        builder.CardAction.imBack(session, buttonCardTitle, buttonTitle)
+      ])
   }
 }
 
@@ -327,13 +328,15 @@ function makeInterpretationCards(interpretations, session, query, callback) {
 }
 
 function makeListForSubtitle(array, getNames) {
-     if (array.length > 10) {
-          var leftover = array.length - 10;
-          var listForSubtitle = getNames(array.slice(0, 9)).join(", ") + ", and " + leftover + " others"
+  if (array) {
+    if (array.length > 10) {
+      const leftover = array.length - 10;
+      return getNames(array.slice(0, 9)).join(", ") + ", and " + leftover + " others";
      } else {
-          var listForSubtitle = getNames(array).join(", ");
+      return getNames(array).join(", ");
      }
-     return listForSubtitle;
+  }
+  return '';
 }
 
 function randomIntInc(low, high) {
@@ -341,12 +344,12 @@ function randomIntInc(low, high) {
 }
 
 function getExampleCardsAttachments(session) {
-    return [
-        makeHeroCard(session, 'Tell me more about EGFR.', makeRandomStockImagePath(), "Tell me more about EGFR.", 'Try It'),
-        makeHeroCard(session, 'What do you know about BRAF V600E?', makeRandomStockImagePath(), "What do you know about BRAF V600E?", 'Try It'),
-        makeHeroCard(session, 'Give me interpretations for EGFR in lung cancer.', makeRandomStockImagePath(), "Give me interpretations for EGFR in lung cancer.", 'Try It'),
-        makeHeroCard(session, 'Find BRAF', makeRandomStockImagePath(), "Find BRAF", 'Try It')
-    ];
+  return [
+    makeHeroCard(session, 'Tell me more about EGFR.', makeRandomStockImagePath(), "Tell me more about EGFR.", 'Try It'),
+    makeHeroCard(session, 'What do you know about BRAF V600E?', makeRandomStockImagePath(), "What do you know about BRAF V600E?", 'Try It'),
+    makeHeroCard(session, 'Give me interpretations for EGFR in lung cancer.', makeRandomStockImagePath(), "Give me interpretations for EGFR in lung cancer.", 'Try It'),
+    makeHeroCard(session, 'Find BRAF', makeRandomStockImagePath(), "Find BRAF", 'Try It')
+  ];
 }
 
 function getReadMoreCard(session, query, total_interpretations) {
