@@ -118,7 +118,7 @@ bot.dialog('getStarted', [
     function (session) {
         var msg = new builder.Message(session)
             .attachments([
-                makeHeroCard(session, "PMKB Bot", host + "/assets/pmkb.png", "examples", 'Show Me Examples', url, "Getting Started", prompts.gettingStartedMsg)
+                makeHeroCard(session, "PMKB Bot", host + "/assets/pmkb.png", "examples", 'Show Me Examples', pmkb_host, "Getting Started", prompts.gettingStartedMsg)
             ]);
         session.endDialog(msg);
     }
@@ -130,7 +130,7 @@ bot.dialog('examples', [
         var msg = new builder.Message(session)
             .textFormat(builder.TextFormat.xml)
             .attachments([
-                makeHeroCard(session, "PMKB Bot", host + "/assets/pmkb.png", "examples", 'Show Me Examples', url, "Examples", prompts.gettingStartedMsg)
+                makeHeroCard(session, "PMKB Bot", host + "/assets/pmkb.png", "examples", 'Show Me Examples', pmkb_host, "Examples", prompts.gettingStartedMsg)
             ]);
 
         var exampleCards = getExampleCardsAttachments();
@@ -171,7 +171,7 @@ bot.dialog('about', [
         var msg = new builder.Message(session)
             .textFormat(builder.TextFormat.xml)
             .attachments([
-                makeHeroCard(session, "PMKB Bot", host + "/assets/pmkb.png", pmkb_host, 'Visit Website', url, "About", prompts.gettingStartedMsg)
+                makeHeroCard(session, "PMKB Bot", host + "/assets/pmkb.png", pmkb_host, 'Visit Website', pmkb_host, "About", prompts.gettingStartedMsg)
             ]);
         session.endDialog(msg);
     }
@@ -274,6 +274,11 @@ function makeQuery(luisResults, callback) {
         }
       }
     }
+    if (luisResults.intent == "None" || queryParams == []) {
+      return callback(null, {
+         value: prompts.errorMsg
+      });
+    }
   }
 
   return callback(null, {
@@ -292,13 +297,16 @@ function makeInterpretationCards(interpretations, session, query, callback) {
 
   const cards = _.map(interpretations, function (i) {
     const interpretationUrl = interpretationUrlBase + i.id;
-    const title = 'Interpretation for ' +  i.gene.name;
+    const title = 'Interpretation for ' + query;
     const getNames = (objs) => _.map(objs, (obj) => obj.name);
-    const subtitle = 'Tumors({tumors}) Tissues({tissues}) Variants({variants})'
-      .replace('{tumors}', getNames(i.tumors))
-      .replace('{tissues}', getNames(i.tissues))
-      .replace('{variants}', getNames(i.variants));
-    makeHeroCard(session, title, subtitle, i.interpretation, makeRandomStockImagePath(), interpretationUrl, 'Read more', interpretationUrl)
+    const tumors = getNames(i.tumors);
+    const tissues = getNames(i.tissues);
+    const variants = getNames(i.variants);
+    const subtitle = "Tumors: " + tumors + "<br/>" + "Tissues:" + tissues + "<br/>" + "Variants: " + variants;
+      // .replace('{tumors}', getNames(i.tumors) + "\n\n"
+      // .replace('{tissues}', getNames(i.tissues) + "\n\n"
+      // .replace('{variants}', getNames(i.variants));
+    makeHeroCard(session, title, makeRandomStockImagePath(), interpretationUrl, 'Read more', interpretationUrl, subtitle, i.interpretation);
   });
 
   total_interpretations = interpretations.length
@@ -319,9 +327,9 @@ function randomIntInc(low, high) {
 
 function getExampleCardsAttachments(session) {
     return [
-        makeHeroCard(session, 'Find EGFR', makeRandomStockImagePath(), "Find EGFR", 'Try It'),
-        makeHeroCard(session, 'Find BRAF V600E', makeRandomStockImagePath(), "Find BRAF V600E", 'Try It'),
-        makeHeroCard(session, 'Find prostate cancer', makeRandomStockImagePath(), "Find prostate cancer", 'Try It'),
+        makeHeroCard(session, 'Tell me more about EGFR.', makeRandomStockImagePath(), "Tell me more about EGFR.", 'Try It'),
+        makeHeroCard(session, 'What do you know about BRAF V600E?', makeRandomStockImagePath(), "What do you know about BRAF V600E?", 'Try It'),
+        makeHeroCard(session, 'Give me interpretations for EGFR in lung cancer.', makeRandomStockImagePath(), "Give me interpretations for EGFR in lung cancer.", 'Try It'),
         makeHeroCard(session, 'Find BRAF', makeRandomStockImagePath(), "Find BRAF", 'Try It')
     ];
 }
