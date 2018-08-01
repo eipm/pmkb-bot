@@ -208,7 +208,7 @@ bot.dialog('find gene',
       pmkbClient.searchInterpretations(query.value, function (err, interpretations) {
         if (err)
           return session.send(err.message);
-        if (query.value == '')
+        if (!query || !query.value || query.value == '')
           session.beginDialog('unknown entity');
         makeInterpretationCards(interpretations, session, query, function (err, cards) {
           let reply = new builder.Message(session)
@@ -307,9 +307,9 @@ function makeInterpretationCards(interpretations, session, query, callback) {
     const interpretationUrl = interpretationUrlBase + i.id;
     const title = 'Interpretation for ' + query.value;
     const getNames = (objs) => _.map(objs, (obj) => obj.name);
-    const tumors = getNames(i.tumors).join(", ");
-    const tissues = getNames(i.tissues).join(", ");
-    const variants = getNames(i.variants).join(", ");
+    const tumors = makeListForSubtitle(i.tumors, getNames);
+    const tissues = makeListForSubtitle(i.tissues, getNames);
+    const variants = makeListForSubtitle(i.variants, getNames);
     const subtitle = `Tumors: ${tumors}<br/><br/>Tissues: ${tissues}<br/><br/>Variants: ${variants}`;
     return makeHeroCard(session, title, makeRandomStockImagePath(), interpretationUrl, 'Read more', interpretationUrl, subtitle, i.interpretation);
   });
@@ -324,6 +324,16 @@ function makeInterpretationCards(interpretations, session, query, callback) {
   else {
     callback(null, cards);
   }
+}
+
+function makeListForSubtitle(array, getNames) {
+     if (array.length > 10) {
+          var leftover = array.length - 10;
+          var listForSubtitle = getNames(array.slice(0, 9)).join(", ") + ", and " + leftover + " others"
+     } else {
+          var listForSubtitle = getNames(array).join(", ");
+     }
+     return listForSubtitle;
 }
 
 function randomIntInc(low, high) {
