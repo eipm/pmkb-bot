@@ -212,7 +212,7 @@ bot.dialog('find gene',
           session.beginDialog('unknown entity');
         makeInterpretationCards(interpretations, session, query, function (err, cards) {
           let reply = new builder.Message(session)
-            .text('Found ' + interpretations.length + ' interpretations associated with ' + "\"" + session.message.text + "\"")
+            .text(`Found ${interpretations.length} interpretations associated with "${session.message.text}"`)
             .attachmentLayout(builder.AttachmentLayout.carousel)
             .attachments(cards);
           session.endDialog(reply);
@@ -309,7 +309,7 @@ function makeInterpretationCards(interpretations, session, query, callback) {
     const tumors = getNames(i.tumors).join(", ");
     const tissues = getNames(i.tissues).join(", ");
     const variants = getNames(i.variants).join(", ");
-    const subtitle = "Tumors: " + tumors + "<br/><br/>" + "Tissues: " + tissues + "<br/><br/>" + "Variants: " + variants;
+    const subtitle = `Tumors: ${tumors}<br/><br/>Tissues: ${tissues}<br/><br/>Variants: ${variants}`;
     return makeHeroCard(session, title, makeRandomStockImagePath(), interpretationUrl, 'Read more', interpretationUrl, subtitle, i.interpretation);
   });
 
