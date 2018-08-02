@@ -118,7 +118,7 @@ bot.dialog('getStarted', [
     function (session) {
         var msg = new builder.Message(session)
             .attachments([
-                makeHeroCard(session, "PMKB Bot", host + "/assets/pmkb.png", "examples", 'Show Me Examples', pmkb_host, "Getting Started", prompts.gettingStartedMsg)
+                makeHeroCard(session, "PMKB Bot", host + "/assets/pmkb.jpg", "examples", 'Show Me Examples', pmkb_host, "Getting Started", prompts.gettingStartedMsg)
             ]);
         session.endDialog(msg);
     }
@@ -130,7 +130,7 @@ bot.dialog('examples', [
         var msg = new builder.Message(session)
             .textFormat(builder.TextFormat.xml)
             .attachments([
-                makeHeroCard(session, "PMKB Bot", host + "/assets/pmkb.png", "examples", 'Show Me Examples', pmkb_host, "Examples", prompts.gettingStartedMsg)
+                makeHeroCard(session, "PMKB Bot", host + "/assets/pmkb.jpg", "examples", 'Show Me Examples', pmkb_host, "Examples", prompts.gettingStartedMsg)
             ]);
 
         var exampleCards = getExampleCardsAttachments();
@@ -171,7 +171,7 @@ bot.dialog('about', [
         var msg = new builder.Message(session)
             .textFormat(builder.TextFormat.xml)
             .attachments([
-                makeHeroCard(session, "PMKB Bot", host + "/assets/pmkb.png", pmkb_host, 'Visit Website', pmkb_host, "About", prompts.gettingStartedMsg)
+                makeHeroCard(session, "PMKB Bot", host + "/assets/pmkb.jpg", pmkb_host, 'Visit Website', pmkb_host, "About", prompts.gettingStartedMsg)
             ]);
         session.endDialog(msg);
     }
@@ -275,7 +275,7 @@ function makeHeroCard(session, title, imagePath, buttonCardTitle, buttonTitle, l
 }
 
 function makeRandomStockImagePath() {
-  return host + "/assets/cards/" + randomIntInc(1, 6) + ".png";
+  return host + "/assets/cards/" + randomIntInc(1, 6) + ".jpg";
 }
 
 function makeQuery(luisResults, callback) {
