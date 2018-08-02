@@ -311,16 +311,15 @@ function makeInterpretationCards(interpretations, session, query, callback) {
     var genes = "";
     if (i.gene && i.gene.name) {
       genes = i.gene.name;
-    } else {
-      genes = "";
     }
     const tumors = makeListForSubtitle(i.tumors, getNames);
     const tissues = makeListForSubtitle(i.tissues, getNames);
     const variants = makeListForSubtitle(i.variants, getNames);
-    const subtitle = `<div class="genes", style="margin-bottom: 5px;"><span style="font-weight:bold;">Genes: </span>${genes}</div>
-                      <div class="tumors", style="margin-bottom: 5px;"><span style="font-weight:bold;">Tumors: </span>${tumors}</div>
-                      <div class="tissues", style="margin-bottom: 5px;"><span style="font-weight:bold;">Tissues: </span>${tissues}</div>
-                      <div class="variants", style="margin-bottom: 20px;"><span style="font-weight:bold;">Variants: </span>${variants}</div>`;
+    const subtitle = `${getSubtitleStyles()}
+                      <div class="genes subtitle"><span class="title">Genes: </span>${genes}</div>
+                      <div class="tumors subtitle"><span class="title">Tumors: </span>${tumors}</div>
+                      <div class="tissues subtitle"><span class="title">Tissues: </span>${tissues}</div>
+                      <div class="variants subtitle"><span class="title">Variants: </span>${variants}</div>`;
     return makeHeroCard(session, title, makeRandomStockImagePath(), interpretationUrl, 'Read more', interpretationUrl, subtitle, i.interpretation);
   });
 
@@ -348,9 +347,19 @@ function makeListForSubtitle(array, getNames) {
   return '';
 }
 
+function getSubtitleStyles() {
+  return `
+  <style>
+    .subtitle { margin-bottom: 5px; }
+    .subtitle .title { font-weight: bold; }
+  </style>`;
+}
+
 function randomIntInc(low, high) {
   return Math.floor(Math.random() * (high - low + 1) + low);
 }
+
+function speak() {}
 
 function getExampleCardsAttachments(session) {
   return [
