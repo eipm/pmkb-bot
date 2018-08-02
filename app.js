@@ -345,10 +345,10 @@ function randomIntInc(low, high) {
 
 function getExampleCardsAttachments(session) {
   return [
-    makeHeroCard(session, 'Tell me more about EGFR.', makeRandomStockImagePath(), "Tell me more about EGFR.", 'Try It'),
+    makeHeroCard(session, 'Tell me more about BRCA1.', makeRandomStockImagePath(), "Tell me more about BRCA1.", 'Try It'),
     makeHeroCard(session, 'What do you know about BRAF V600E?', makeRandomStockImagePath(), "What do you know about BRAF V600E?", 'Try It'),
     makeHeroCard(session, 'Give me interpretations for EGFR in lung cancer.', makeRandomStockImagePath(), "Give me interpretations for EGFR in lung cancer.", 'Try It'),
-    makeHeroCard(session, 'Find BRAF', makeRandomStockImagePath(), "Find BRAF", 'Try It')
+    makeHeroCard(session, 'What do you know about Acute Myeloid Leukemia?', makeRandomStockImagePath(), "What do you know about Acute Myeloid Leukemia?", 'Try It')
   ];
 }
 
