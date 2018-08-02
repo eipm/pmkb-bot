@@ -348,8 +348,6 @@ function randomIntInc(low, high) {
   return Math.floor(Math.random() * (high - low + 1) + low);
 }
 
-function speak() {}
-
 function getExampleCardsAttachments(session) {
   return [
     makeHeroCard(session, 'Tell me more about BRCA1.', makeRandomStockImagePath(), "Tell me more about BRCA1.", 'Try It'),
