@@ -118,17 +118,7 @@ bot.dialog('getStarted', [
     function (session) {
         var msg = new builder.Message(session)
             .attachments([
-                new builder.HeroCard(session)
-                    .title("PMKB Bot")
-                    .subtitle("Getting Started")
-                    .text(prompts.gettingStartedMsg)
-                    .images([
-                        builder.CardImage.create(session, host + "/assets/pmkb.png")
-                    ])
-                    .buttons([
-                        builder.CardAction.imBack(session, "examples", 'Show me Examples'),
-                    ])
-                    .tap(builder.CardAction.openUrl(session, pmkb_host))
+                makeHeroCard(session, "PMKB Bot", host + "/assets/pmkb.jpg", "examples", 'Show Me Examples', pmkb_host, "Getting Started", prompts.gettingStartedMsg)
             ]);
         session.endDialog(msg);
     }
@@ -140,17 +130,7 @@ bot.dialog('examples', [
         var msg = new builder.Message(session)
             .textFormat(builder.TextFormat.xml)
             .attachments([
-                new builder.HeroCard(session)
-                    .title("PMKB Bot")
-                    .subtitle("Examples")
-                    .text(prompts.gettingStartedMsg)
-                    .images([
-                        builder.CardImage.create(session, host + "/assets/pmkb.png")
-                    ])
-                    .buttons([
-                        builder.CardAction.imBack(session, "examples", 'Show me Examples')
-                    ])
-                    .tap(builder.CardAction.openUrl(session, pmkb_host))
+                makeHeroCard(session, "PMKB Bot", host + "/assets/pmkb.jpg", "examples", 'Show Me Examples', pmkb_host, "Examples", prompts.gettingStartedMsg)
             ]);
 
         var exampleCards = getExampleCardsAttachments();
@@ -191,17 +171,7 @@ bot.dialog('about', [
         var msg = new builder.Message(session)
             .textFormat(builder.TextFormat.xml)
             .attachments([
-                new builder.HeroCard(session)
-                    .title("PMKB Bot")
-                    .subtitle("About")
-                    .text(prompts.gettingStartedMsg)
-                    .images([
-                        builder.CardImage.create(session, host + "/assets/pmkb.png")
-                    ])
-                    .buttons([
-                        builder.CardAction.openUrl(session, pmkb_host, 'Visit Website')
-                    ])
-                    .tap(builder.CardAction.openUrl(session, pmkb_host))
+                makeHeroCard(session, "PMKB Bot", host + "/assets/pmkb.jpg", pmkb_host, 'Visit Website', pmkb_host, "About", prompts.gettingStartedMsg)
             ]);
         session.endDialog(msg);
     }
@@ -238,17 +208,32 @@ bot.dialog('find gene',
       pmkbClient.searchInterpretations(query.value, function (err, interpretations) {
         if (err)
           return session.send(err.message);
-        console.log(query)
-        makeInterpretationCards(interpretations, session, query, function (err, cards) {
-          let reply = new builder.Message(session)
-            .text('Found ' + interpretations.length + ' interpretations for ' + query.value)
-            .attachmentLayout(builder.AttachmentLayout.carousel)
-            .attachments(cards);
-          session.endDialog(reply);
-        });
+        if (query && query.value && !(query.value === '')) {
+          makeInterpretationCards(interpretations, session, query, function (err, cards) {
+            const reply = new builder.Message(session)
+              .text(`Found ${interpretations.length} interpretations associated with "${session.message.text}"`)
+              .attachmentLayout(builder.AttachmentLayout.carousel)
+              .attachments(cards);
+            session.endDialog(reply);
+          });
+        } else {
+          session.beginDialog('unknown entity');
+        }
       });
     });
   }).triggerAction({matches: "findGene"});
+
+bot.dialog('none', [
+  function (session) {
+    session.endDialog(prompts.errorMsg);
+  }
+]).triggerAction({matches: "None"});
+
+bot.dialog('unknown entity', [
+  function (session) {
+    session.endDialog(prompts.errorMsg);
+  }
+]);
 
 // List Genes Dialog
 bot.dialog('list genes', function (session) {
@@ -264,6 +249,24 @@ bot.dialog('list genes', function (session) {
 //=====================
 // Helper functions
 //=====================
+function makeHeroCard(session, title, imagePath, buttonLink, buttonTitle, link, subtitle, text, openUrl) {
+    return new builder.HeroCard(session)
+      .title(title)
+      .subtitle(subtitle)
+      .text(text)
+      .images([
+        builder.CardImage.create(session, imagePath)
+      ])
+      .buttons([ openUrl
+         ? builder.CardAction.openUrl(session, buttonLink, buttonTitle)
+         : builder.CardAction.imBack(session, buttonLink, buttonTitle)
+      ])
+      .tap(builder.CardAction.openUrl(session, link));
+}
+
+function makeRandomStockImagePath() {
+  return host + "/assets/cards/" + randomIntInc(1, 6) + ".jpg";
+}
 
 function makeQuery(luisResults, callback) {
   const queryParams = [];
@@ -289,35 +292,31 @@ function checkEntity(entity) {
 
 function makeInterpretationCards(interpretations, session, query, callback) {
   const interpretationUrlBase = pmkb_host + '/therapies/';
-  let parts = _.partition(interpretations, (i) => i.gene.name === query);
+  let parts = _.partition(interpretations, (i) => query);
   interpretations = parts[0].concat(parts[1]);  // Place most relevant genes first
-
   const cards = _.map(interpretations, function (i) {
     const interpretationUrl = interpretationUrlBase + i.id;
-    const title = 'Interpretation for ' +  i.gene.name;
+    const title = 'Interpretation for ' + query.value;
     const getNames = (objs) => _.map(objs, (obj) => obj.name);
-    const subtitle = 'Tumors({tumors}) Tissues({tissues}) Variants({variants})'
-      .replace('{tumors}', getNames(i.tumors))
-      .replace('{tissues}', getNames(i.tissues))
-      .replace('{variants}', getNames(i.variants));
-    return new builder.HeroCard(session)
-      .title(title)
-      .subtitle(subtitle)
-      .text(i.interpretation)
-      .images([
-        builder.CardImage.create(session, host + "/assets/cards/" + randomIntInc(1, 6) + ".png")
-      ])
-      .buttons([
-        builder.CardAction.openUrl(session, interpretationUrl, 'Read more')
-      ])
-      .tap(builder.CardAction.openUrl(session, interpretationUrl));
+    var genes = "";
+    if (i.gene && i.gene.name) {
+      genes = i.gene.name;
+    }
+    const tumors = makeListForSubtitle(i.tumors, getNames);
+    const tissues = makeListForSubtitle(i.tissues, getNames);
+    const variants = makeListForSubtitle(i.variants, getNames);
+    const subtitle = `${getSubtitleStyles()}
+                      <div class="genes subtitle"><span class="title">Genes: </span>${genes}</div>
+                      <div class="tumors subtitle"><span class="title">Tumors: </span>${tumors}</div>
+                      <div class="tissues subtitle"><span class="title">Tissues: </span>${tissues}</div>
+                      <div class="variants subtitle"><span class="title">Variants: </span>${variants}</div>`;
+    return makeHeroCard(session, title, makeRandomStockImagePath(), interpretationUrl, 'Read more', interpretationUrl, subtitle, i.interpretation, 1);
   });
 
-  total_interpretations = interpretations.length
   max_cards = 10;
   if (interpretations.length > max_cards) {
       reduced_cards = cards.slice(0, max_cards - 1);
-      var total_cards = reduced_cards.concat(getReadMoreCard(session, query, total_interpretations))
+      var total_cards = reduced_cards.concat(getReadMoreCard(session, query, interpretations.length));
       callback(null, total_cards);
   }
   else {
@@ -325,61 +324,43 @@ function makeInterpretationCards(interpretations, session, query, callback) {
   }
 }
 
+function makeListForSubtitle(array, getNames) {
+  if (array) {
+    if (array.length > 10) {
+      const leftover = array.length - 10;
+      return getNames(array.slice(0, 9)).join(", ") + ", and " + leftover + " others";
+     } else {
+      return getNames(array).join(", ");
+     }
+  }
+  return '';
+}
+
+function getSubtitleStyles() {
+  return `
+  <style>
+    .subtitle { margin-bottom: 5px; }
+    .subtitle .title { font-weight: bold; }
+  </style>`;
+}
+
 function randomIntInc(low, high) {
   return Math.floor(Math.random() * (high - low + 1) + low);
 }
 
 function getExampleCardsAttachments(session) {
-    return [
-        new builder.HeroCard(session)
-            .title('Find EGFR')
-            .images([
-                builder.CardImage.create(session, host + "/assets/cards/" + randomIntInc(1,6) + ".png")
-            ])
-            .buttons([
-                builder.CardAction.imBack(session, "Find EGFR", 'Try It')
-            ]),
-
-        new builder.HeroCard(session)
-            .title('Find BRAF V600E')
-            .images([
-                builder.CardImage.create(session, host + "/assets/cards/" + randomIntInc(1,6) + ".png")
-            ])
-            .buttons([
-                builder.CardAction.imBack(session, "Find BRAF V600E", 'Try It')
-            ]),
-
-        new builder.HeroCard(session)
-            .title('Find prostate cancer')
-            .images([
-                builder.CardImage.create(session, host + "/assets/cards/" + randomIntInc(1,6) + ".png")
-            ])
-            .buttons([
-                builder.CardAction.imBack(session, "Find prostate cancer", 'Try It')
-            ]),
-
-        new builder.HeroCard(session)
-            .title('Find BRAF')
-            .images([
-                builder.CardImage.create(session, host + "/assets/cards/" + randomIntInc(1,6) + ".png")
-            ])
-            .buttons([
-                builder.CardAction.imBack(session, "Find BRAF", 'Try It')
-            ])
-    ];
+  return [
+    makeHeroCard(session, 'Tell me more about BRCA1.', makeRandomStockImagePath(), "Tell me more about BRCA1.", 'Try It'),
+    makeHeroCard(session, 'What do you know about BRAF V600E?', makeRandomStockImagePath(), "What do you know about BRAF V600E?", 'Try It'),
+    makeHeroCard(session, 'Give me interpretations for EGFR in lung cancer.', makeRandomStockImagePath(), "Give me interpretations for EGFR in lung cancer.", 'Try It'),
+    makeHeroCard(session, 'What do you know about Acute Myeloid Leukemia?', makeRandomStockImagePath(), "What do you know about Acute Myeloid Leukemia?", 'Try It')
+  ];
 }
 
 function getReadMoreCard(session, query, total_interpretations) {
+    const url = pmkb_host + "/search?utf8=✓&search=" + query.value.replace(" ", "+");
+    const text = "There are " + total_interpretations + " interpretations in total. Please click below to read more";
     return [
-        new builder.HeroCard(session)
-            .title('Interpretations for ' +  query.value)
-            .images([
-                builder.CardImage.create(session, host + "/assets/cards/" + randomIntInc(1,6) + ".png")
-            ])
-            .text("There are " + total_interpretations + " interpretations in total. Please click below to read more", 'Read more')
-            .buttons([
-                builder.CardAction.openUrl(session, pmkb_host + "/search?utf8=✓&search=" + query.value.replace(" ", "+"), 'Read more')
-            ])
-            .tap(builder.CardAction.openUrl(session, pmkb_host + "/search?utf8=✓&search=" + query.value.replace(" ", "+")))
+      makeHeroCard(session, `Interpretations for ${query.value}`, makeRandomStockImagePath(), url, 'Read More', url, "", text, 1)
     ];
 }
