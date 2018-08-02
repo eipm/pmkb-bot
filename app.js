@@ -210,7 +210,7 @@ bot.dialog('find gene',
           return session.send(err.message);
         if (query && query.value && !(query.value === '')) {
           makeInterpretationCards(interpretations, session, query, function (err, cards) {
-            let reply = new builder.Message(session)
+            const reply = new builder.Message(session)
               .text(`Found ${interpretations.length} interpretations associated with "${session.message.text}"`)
               .attachmentLayout(builder.AttachmentLayout.carousel)
               .attachments(cards);
