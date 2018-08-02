@@ -357,7 +357,7 @@ function getReadMoreCard(session, query, total_interpretations) {
         new builder.HeroCard(session)
             .title('Interpretations for ' +  query.value)
             .images([
-                builder.CardImage.create(session, host + "/assets/cards/" + randomIntInc(1,6) + ".png")
+                builder.CardImage.create(session, host + "/assets/cards/" + randomIntInc(1,6) + ".jpg")
             ])
             .text("There are " + total_interpretations + " interpretations in total. Please click below to read more", 'Read more')
             .buttons([
