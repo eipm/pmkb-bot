@@ -305,10 +305,10 @@ function makeInterpretationCards(interpretations, session, query, callback) {
     const tumors = makeListForSubtitle(i.tumors, getNames);
     const tissues = makeListForSubtitle(i.tissues, getNames);
     const variants = makeListForSubtitle(i.variants, getNames);
-    const subtitle = `Genes: ${genes} \n\n
-                      Tumors: ${tumors} \n\n
-                      Tissues: ${tissues} \n\n
-                      Variants: ${variants}`;
+    const subtitle = `Genes: ${genes}
+Tumors: ${tumors}
+Tissues: ${tissues}
+Variants: ${variants}`;
     return makeHeroCard(session, title, makeRandomStockImagePath(), interpretationUrl, 'Read more', interpretationUrl, subtitle, i.interpretation, 1);
   });
 
