@@ -249,8 +249,7 @@ bot.dialog('list genes', function (session) {
 //=====================
 // Helper functions
 //=====================
-function makeHeroCard(session, title, imagePath, buttonCardTitle, buttonTitle, link, subtitle, text) {
-  if (link && subtitle && text) {
+function makeHeroCard(session, title, imagePath, buttonLink, buttonTitle, link, subtitle, text, openUrl) {
     return new builder.HeroCard(session)
       .title(title)
       .subtitle(subtitle)
@@ -258,20 +257,11 @@ function makeHeroCard(session, title, imagePath, buttonCardTitle, buttonTitle, l
       .images([
         builder.CardImage.create(session, imagePath)
       ])
-      .buttons([
-        builder.CardAction.imBack(session, buttonCardTitle, buttonTitle)
+      .buttons([ openUrl
+         ? builder.CardAction.openUrl(session, buttonLink, buttonTitle)
+         : builder.CardAction.imBack(session, buttonLink, buttonTitle)
       ])
       .tap(builder.CardAction.openUrl(session, link));
-  } else {
-    return new builder.HeroCard(session)
-      .title(title)
-      .images([
-        builder.CardImage.create(session, imagePath)
-      ])
-      .buttons([
-        builder.CardAction.imBack(session, buttonCardTitle, buttonTitle)
-      ])
-  }
 }
 
 function makeRandomStockImagePath() {
@@ -320,14 +310,13 @@ function makeInterpretationCards(interpretations, session, query, callback) {
                       <div class="tumors subtitle"><span class="title">Tumors: </span>${tumors}</div>
                       <div class="tissues subtitle"><span class="title">Tissues: </span>${tissues}</div>
                       <div class="variants subtitle"><span class="title">Variants: </span>${variants}</div>`;
-    return makeHeroCard(session, title, makeRandomStockImagePath(), interpretationUrl, 'Read more', interpretationUrl, subtitle, i.interpretation);
+    return makeHeroCard(session, title, makeRandomStockImagePath(), interpretationUrl, 'Read more', interpretationUrl, subtitle, i.interpretation, 1);
   });
 
-  total_interpretations = interpretations.length
   max_cards = 10;
   if (interpretations.length > max_cards) {
       reduced_cards = cards.slice(0, max_cards - 1);
-      var total_cards = reduced_cards.concat(getReadMoreCard(session, query, total_interpretations))
+      var total_cards = reduced_cards.concat(getReadMoreCard(session, query, interpretations.length));
       callback(null, total_cards);
   }
   else {
@@ -371,16 +360,9 @@ function getExampleCardsAttachments(session) {
 }
 
 function getReadMoreCard(session, query, total_interpretations) {
+    const url = pmkb_host + "/search?utf8=✓&search=" + query.value.replace(" ", "+");
+    const text = "There are " + total_interpretations + " interpretations in total. Please click below to read more";
     return [
-        new builder.HeroCard(session)
-            .title('Interpretations for ' +  query.value)
-            .images([
-                builder.CardImage.create(session, makeRandomStockImagePath())
-            ])
-            .text("There are " + total_interpretations + " interpretations in total. Please click below to read more", 'Read more')
-            .buttons([
-                builder.CardAction.openUrl(session, pmkb_host + "/search?utf8=✓&search=" + query.value.replace(" ", "+"), 'Read more')
-            ])
-            .tap(builder.CardAction.openUrl(session, pmkb_host + "/search?utf8=✓&search=" + query.value.replace(" ", "+")))
+      makeHeroCard(session, `Interpretations for ${query.value}`, makeRandomStockImagePath(), url, 'Read More', url, "", text, 1)
     ];
 }
