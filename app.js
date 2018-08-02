@@ -302,16 +302,25 @@ function checkEntity(entity) {
 
 function makeInterpretationCards(interpretations, session, query, callback) {
   const interpretationUrlBase = pmkb_host + '/therapies/';
-  let parts = _.partition(interpretations, (i) => i.gene.name === query);
+  let parts = _.partition(interpretations, (i) => query);
   interpretations = parts[0].concat(parts[1]);  // Place most relevant genes first
   const cards = _.map(interpretations, function (i) {
     const interpretationUrl = interpretationUrlBase + i.id;
     const title = 'Interpretation for ' + query.value;
     const getNames = (objs) => _.map(objs, (obj) => obj.name);
+    var genes = "";
+    if (i.gene && i.gene.name) {
+      genes = i.gene.name;
+    } else {
+      genes = "";
+    }
     const tumors = makeListForSubtitle(i.tumors, getNames);
     const tissues = makeListForSubtitle(i.tissues, getNames);
     const variants = makeListForSubtitle(i.variants, getNames);
-    const subtitle = `Tumors: ${tumors}<br/><br/>Tissues: ${tissues}<br/><br/>Variants: ${variants}`;
+    const subtitle = `<div class="genes", style="margin-bottom: 5px;"><span style="font-weight:bold;">Genes: </span>${genes}</div>
+                      <div class="tumors", style="margin-bottom: 5px;"><span style="font-weight:bold;">Tumors: </span>${tumors}</div>
+                      <div class="tissues", style="margin-bottom: 5px;"><span style="font-weight:bold;">Tissues: </span>${tissues}</div>
+                      <div class="variants", style="margin-bottom: 20px;"><span style="font-weight:bold;">Variants: </span>${variants}</div>`;
     return makeHeroCard(session, title, makeRandomStockImagePath(), interpretationUrl, 'Read more', interpretationUrl, subtitle, i.interpretation);
   });
 
@@ -357,7 +366,7 @@ function getReadMoreCard(session, query, total_interpretations) {
         new builder.HeroCard(session)
             .title('Interpretations for ' +  query.value)
             .images([
-                builder.CardImage.create(session, host + "/assets/cards/" + randomIntInc(1,6) + ".jpg")
+                builder.CardImage.create(session, makeRandomStockImagePath())
             ])
             .text("There are " + total_interpretations + " interpretations in total. Please click below to read more", 'Read more')
             .buttons([
