@@ -305,11 +305,10 @@ function makeInterpretationCards(interpretations, session, query, callback) {
     const tumors = makeListForSubtitle(i.tumors, getNames);
     const tissues = makeListForSubtitle(i.tissues, getNames);
     const variants = makeListForSubtitle(i.variants, getNames);
-    const subtitle = `${getSubtitleStyles()}
-                      <div class="genes subtitle"><span class="title">Genes: </span>${genes}</div>
-                      <div class="tumors subtitle"><span class="title">Tumors: </span>${tumors}</div>
-                      <div class="tissues subtitle"><span class="title">Tissues: </span>${tissues}</div>
-                      <div class="variants subtitle"><span class="title">Variants: </span>${variants}</div>`;
+    const subtitle = `Genes: ${genes} \n\n
+                      Tumors: ${tumors} \n\n
+                      Tissues: ${tissues} \n\n
+                      Variants: ${variants}`;
     return makeHeroCard(session, title, makeRandomStockImagePath(), interpretationUrl, 'Read more', interpretationUrl, subtitle, i.interpretation, 1);
   });
 
@@ -334,14 +333,6 @@ function makeListForSubtitle(array, getNames) {
      }
   }
   return '';
-}
-
-function getSubtitleStyles() {
-  return `
-  <style>
-    .subtitle { margin-bottom: 5px; }
-    .subtitle .title { font-weight: bold; }
-  </style>`;
 }
 
 function randomIntInc(low, high) {
