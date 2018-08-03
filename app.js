@@ -311,8 +311,7 @@ Tumors: ${tumors}
 
 Tissues: ${tissues}
 
-Variants: ${variants}
-`;
+Variants: ${variants}`;
     return makeHeroCard(session, title, makeRandomStockImagePath(), interpretationUrl, 'Read more', interpretationUrl, subtitle, i.interpretation, 1);
   });
 
