@@ -5,6 +5,7 @@ const PMKBClient = require('./lib/pmkbClient');
 const async = require('async');
 const _ = require('underscore');
 var handlebars = require('node-handlebars');
+var ssml = require('./ssml');
 var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 
 //=========================================================
@@ -117,6 +118,7 @@ bot.dialog('disclaimerStart', [
 bot.dialog('getStarted', [
     function (session) {
         var msg = new builder.Message(session)
+            // .speak(speak(session, prompts.gettingStartedMsg))
             .attachments([
                 makeHeroCard(session, "PMKB Bot", host + "/assets/pmkb.jpg", "examples", 'Show Me Examples', pmkb_host, "Getting Started", prompts.gettingStartedMsg)
             ]);
@@ -249,6 +251,11 @@ bot.dialog('list genes', function (session) {
 //=====================
 // Helper functions
 //=====================
+// function speak(session, prompt) {
+//     var localized = session.gettext(prompt);
+//     return ssml.speak(localized);
+// }
+
 function makeHeroCard(session, title, imagePath, buttonLink, buttonTitle, link, subtitle, text, openUrl) {
     return new builder.HeroCard(session)
       .title(title)
