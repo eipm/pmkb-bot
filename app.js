@@ -129,13 +129,13 @@ bot.dialog('getStarted', [
 // Examples Dialog.
 bot.dialog('examples', [
     function (session) {
-        const text = "Here are some examples";
+      console.log(session);
         var exampleCards = getExampleCardsAttachments();
         var reply = new builder.Message(session)
-          .text(text)
+          .text(prompts.examples)
           .attachmentLayout(builder.AttachmentLayout.carousel)
           .attachments(exampleCards)
-          .speak(speak(session, text));
+          .speak(speak(session, prompts.examples));
         session.endDialog(reply);
     }
 ]).triggerAction({matches:/(^examples)/i});
@@ -351,10 +351,10 @@ function randomIntInc(low, high) {
 
 function getExampleCardsAttachments(session) {
   return [
-    makeHeroCard(session, 'Tell me more about BRCA1.', makeRandomStockImagePath(), "Tell me more about BRCA1.", 'Try It'),
-    makeHeroCard(session, 'What do you know about BRAF V600E?', makeRandomStockImagePath(), "What do you know about BRAF V600E?", 'Try It'),
-    makeHeroCard(session, 'Give me interpretations for EGFR in lung cancer.', makeRandomStockImagePath(), "Give me interpretations for EGFR in lung cancer.", 'Try It'),
-    makeHeroCard(session, 'What do you know about Acute Myeloid Leukemia?', makeRandomStockImagePath(), "What do you know about Acute Myeloid Leukemia?", 'Try It')
+    makeHeroCard(session, prompts.exBrca1, makeRandomStockImagePath(), prompts.exBrca1, 'Try It'),
+    makeHeroCard(session, prompts.exVariant, makeRandomStockImagePath(), prompts.exVariant, 'Try It'),
+    makeHeroCard(session, prompts.exComplex, makeRandomStockImagePath(), prompts.exComplex, 'Try It'),
+    makeHeroCard(session, prompts.exTumor, makeRandomStockImagePath(), prompts.exTumor, 'Try It')
   ];
 }
 
