@@ -129,7 +129,6 @@ bot.dialog('getStarted', [
 // Examples Dialog.
 bot.dialog('examples', [
     function (session) {
-      console.log(session);
         var exampleCards = getExampleCardsAttachments();
         var reply = new builder.Message(session)
           .text(prompts.examples)
@@ -157,7 +156,8 @@ bot.dialog('disclaimer', [
                         builder.CardAction.openUrl(session, pmkb_host, 'Visit Website')
                     ])
                     .tap(builder.CardAction.openUrl(session, pmkb_host))
-            ]);
+            ])
+            .speak(speak(session, prompts.disclaimerMsg));
         session.endDialog(msg);
     }
 ]).triggerAction({matches:/^disclaimer/i});
@@ -169,7 +169,8 @@ bot.dialog('about', [
             .textFormat(builder.TextFormat.xml)
             .attachments([
                 makeHeroCard(session, "PMKB Bot", host + "/assets/pmkb.jpg", pmkb_host, 'Visit Website', pmkb_host, "About", prompts.gettingStartedMsg)
-            ]);
+            ])
+            .speak(speak(session, prompts.gettingStartedMsg));
         session.endDialog(msg);
     }
 ]).triggerAction({matches:/^about/i});
@@ -177,13 +178,20 @@ bot.dialog('about', [
 // Exit Dialog
 bot.dialog('exit', [
     function (session) {
-        session.endDialog(prompts.exitMsg);
+      var msg = new builder.Message(session)
+        .text(prompts.exitMsg)
+        .speak(speak(session, prompts.exitMsg));
+      session.endDialog(msg);
     }
 ]).triggerAction({matches:/^bye/i});
 
 bot.dialog('test', function (session) {
   pmkbClient.isAlive(function (err, isUp) {
-    session.send('PMKB is ' + (isUp ? 'up' : 'down'));
+    const alive = 'PMKB is ' + (isUp ? 'up' : 'down');
+    var msg = new builder.Message(session)
+      .text(alive)
+      .speak(speak(session, alive));
+    session.endDialog(msg);
   })
 }).triggerAction({matches: /^test pmkb/});
 
@@ -227,13 +235,17 @@ bot.dialog('find gene',
 
 bot.dialog('none', [
   function (session) {
-    session.endDialog(prompts.errorMsg);
+    var msg = new builder.Message(session)
+      .text(prompts.errorMsg)
+      .speak(speak(session, prompts.errorMsg));
   }
 ]).triggerAction({matches: "None"});
 
 bot.dialog('unknown entity', [
   function (session) {
-    session.endDialog(prompts.errorMsg);
+    var msg = new builder.Message(session)
+      .text(prompts.errorMsg)
+      .speak(speak(session, prompts.errorMsg));
   }
 ]);
 
@@ -254,6 +266,15 @@ bot.dialog('list genes', function (session) {
 function speak(session, prompt) {
     var localized = session.gettext(prompt);
     return ssml.speak(localized);
+}
+
+function buildMsg(session, text, attachments, textFormat, layout) {
+  return new builder.Message(session)
+    .textFormat(textFormat)
+    .text(text)
+    .attachmentLayout(layout)
+    .attachments(attachments)
+    .speak(speak(session, text));
 }
 
 function makeHeroCard(session, title, imagePath, buttonLink, buttonTitle, link, subtitle, text, openUrl) {
