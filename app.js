@@ -118,10 +118,10 @@ bot.dialog('disclaimerStart', [
 bot.dialog('getStarted', [
     function (session) {
         var msg = new builder.Message(session)
-            // .speak(speak(session, prompts.gettingStartedMsg))
             .attachments([
                 makeHeroCard(session, "PMKB Bot", host + "/assets/pmkb.jpg", "examples", 'Show Me Examples', pmkb_host, "Getting Started", prompts.gettingStartedMsg)
-            ]);
+            ])
+            .speak(speak(session, prompts.gettingStartedMsg));
         session.endDialog(msg);
     }
 ]);
@@ -129,18 +129,13 @@ bot.dialog('getStarted', [
 // Examples Dialog.
 bot.dialog('examples', [
     function (session) {
-        var msg = new builder.Message(session)
-            .textFormat(builder.TextFormat.xml)
-            .attachments([
-                makeHeroCard(session, "PMKB Bot", host + "/assets/pmkb.jpg", "examples", 'Show Me Examples', pmkb_host, "Examples", prompts.gettingStartedMsg)
-            ]);
-
+        const text = "Here are some examples";
         var exampleCards = getExampleCardsAttachments();
         var reply = new builder.Message(session)
-        .text('Examples')
-        .attachmentLayout(builder.AttachmentLayout.carousel)
-        .attachments(exampleCards);
-
+          .text(text)
+          .attachmentLayout(builder.AttachmentLayout.carousel)
+          .attachments(exampleCards)
+          .speak(speak(session, text));
         session.endDialog(reply);
     }
 ]).triggerAction({matches:/(^examples)/i});
@@ -195,7 +190,10 @@ bot.dialog('test', function (session) {
 // Who Are you? Dialog
 bot.dialog('whoAmI', [
     function (session) {
-        session.endDialog(prompts.whoAmI);
+      var msg = new builder.Message(session)
+        .text(prompts.whoAmI)
+        .speak(speak(session, prompts.whoAmI));
+      session.endDialog(msg);
     }
 ]).triggerAction({matches:/(^who are you.*)|(^what is your name.*)/i});
 
@@ -212,10 +210,12 @@ bot.dialog('find gene',
           return session.send(err.message);
         if (query && query.value && !(query.value === '')) {
           makeInterpretationCards(interpretations, session, query, function (err, cards) {
+            const text = `Found ${interpretations.length} interpretations associated with "${session.message.text}"`;
             const reply = new builder.Message(session)
-              .text(`Found ${interpretations.length} interpretations associated with "${session.message.text}"`)
+              .text(text)
               .attachmentLayout(builder.AttachmentLayout.carousel)
-              .attachments(cards);
+              .attachments(cards)
+              .speak(speak(session, text));
             session.endDialog(reply);
           });
         } else {
@@ -251,10 +251,10 @@ bot.dialog('list genes', function (session) {
 //=====================
 // Helper functions
 //=====================
-// function speak(session, prompt) {
-//     var localized = session.gettext(prompt);
-//     return ssml.speak(localized);
-// }
+function speak(session, prompt) {
+    var localized = session.gettext(prompt);
+    return ssml.speak(localized);
+}
 
 function makeHeroCard(session, title, imagePath, buttonLink, buttonTitle, link, subtitle, text, openUrl) {
     return new builder.HeroCard(session)
