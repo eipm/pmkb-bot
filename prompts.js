@@ -4,7 +4,7 @@ module.exports= {
     gettingStartedMsg: 'Type your query to get started. You can also check some examples of what you can do by clicking below.',
     exitMsg: 'Thank you for using PMKB. Enjoy your day :)',
     errorMsg: "I'm sorry, I didn't quite get that. Could you please repeat your query making sure to include a gene name, variant, tissue type, or tumor type? If unsure type 'help'",
-    whoAmI: "I am the PMKB Bot."
+    whoAmI: "I am the PMKB Bot.",
     exBrca1: "Tell me more about BRCA1.",
     exVariant: "What do you know about BRAF V600E?",
     exComplex: "Give me interpretations for EGFR in lung cancer.",
