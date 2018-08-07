@@ -94,7 +94,7 @@ bot.dialog('hello', [
 // Disclaimer message
 bot.dialog('disclaimerStart', [
     function (session) {
-        var msg = new builder.Message(session)
+        const msg = new builder.Message(session)
             .textFormat(builder.TextFormat.markdown)
             .attachments([
                 new builder.ThumbnailCard(session)
@@ -117,7 +117,7 @@ bot.dialog('disclaimerStart', [
 // Getting Started Dialog.
 bot.dialog('getStarted', [
     function (session) {
-        var msg = new builder.Message(session)
+        const msg = new builder.Message(session)
             .attachments([
                 makeHeroCard(session, "PMKB Bot", host + "/assets/pmkb.jpg", "examples", 'Show Me Examples', pmkb_host, "Getting Started", prompts.gettingStartedMsg)
             ])
@@ -130,7 +130,7 @@ bot.dialog('getStarted', [
 bot.dialog('examples', [
     function (session) {
         var exampleCards = getExampleCardsAttachments();
-        var reply = new builder.Message(session)
+        const reply = new builder.Message(session)
           .text(prompts.examples)
           .attachmentLayout(builder.AttachmentLayout.carousel)
           .attachments(exampleCards)
@@ -142,7 +142,7 @@ bot.dialog('examples', [
 // Disclaimer message
 bot.dialog('disclaimer', [
     function (session) {
-        var msg = new builder.Message(session)
+        const msg = new builder.Message(session)
             .textFormat(builder.TextFormat.markdown)
             .attachments([
                 new builder.ThumbnailCard(session)
@@ -165,7 +165,7 @@ bot.dialog('disclaimer', [
 // About Dialog
 bot.dialog('about', [
     function (session) {
-        var msg = new builder.Message(session)
+        const msg = new builder.Message(session)
             .textFormat(builder.TextFormat.xml)
             .attachments([
                 makeHeroCard(session, "PMKB Bot", host + "/assets/pmkb.jpg", pmkb_host, 'Visit Website', pmkb_host, "About", prompts.gettingStartedMsg)
@@ -178,7 +178,7 @@ bot.dialog('about', [
 // Exit Dialog
 bot.dialog('exit', [
     function (session) {
-      var msg = new builder.Message(session)
+      const msg = new builder.Message(session)
         .text(prompts.exitMsg)
         .speak(speak(session, prompts.exitMsg));
       session.endDialog(msg);
@@ -188,7 +188,7 @@ bot.dialog('exit', [
 bot.dialog('test', function (session) {
   pmkbClient.isAlive(function (err, isUp) {
     const alive = 'PMKB is ' + (isUp ? 'up' : 'down');
-    var msg = new builder.Message(session)
+    const msg = new builder.Message(session)
       .text(alive)
       .speak(speak(session, alive));
     session.endDialog(msg);
@@ -198,7 +198,7 @@ bot.dialog('test', function (session) {
 // Who Are you? Dialog
 bot.dialog('whoAmI', [
     function (session) {
-      var msg = new builder.Message(session)
+      const msg = new builder.Message(session)
         .text(prompts.whoAmI)
         .speak(speak(session, prompts.whoAmI));
       session.endDialog(msg);
@@ -235,7 +235,7 @@ bot.dialog('find gene',
 
 bot.dialog('none', [
   function (session) {
-    var msg = new builder.Message(session)
+    const msg = new builder.Message(session)
       .text(prompts.errorMsg)
       .speak(speak(session, prompts.errorMsg));
   }
@@ -243,7 +243,7 @@ bot.dialog('none', [
 
 bot.dialog('unknown entity', [
   function (session) {
-    var msg = new builder.Message(session)
+    const msg = new builder.Message(session)
       .text(prompts.errorMsg)
       .speak(speak(session, prompts.errorMsg));
   }
