@@ -238,6 +238,7 @@ bot.dialog('none', [
     const msg = new builder.Message(session)
       .text(prompts.errorMsg)
       .speak(speak(session, prompts.errorMsg));
+    session.endDialog(msg);
   }
 ]).triggerAction({matches: "None"});
 
@@ -246,6 +247,7 @@ bot.dialog('unknown entity', [
     const msg = new builder.Message(session)
       .text(prompts.errorMsg)
       .speak(speak(session, prompts.errorMsg));
+    session.endDialog(msg);
   }
 ]);
 
