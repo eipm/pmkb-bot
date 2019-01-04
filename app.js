@@ -337,11 +337,11 @@ function makeInterpretationCards(interpretations, session, query, callback) {
     const variants = makeListForSubtitle(i.variants, getNames);
     const subtitle = `Genes: ${genes}
 
-Tumors: ${tumors}
+Variants: ${variants}
 
-Tissues: ${tissues}
+Tumor Types: ${tumors}
 
-Variants: ${variants}`;
+Primary Sites: ${tissues}`;
     return makeHeroCard(session, title, makeRandomStockImagePath(), interpretationUrl, 'Read more', interpretationUrl, subtitle, i.interpretation, 1);
   });
 
