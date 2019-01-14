@@ -3,7 +3,6 @@ var builder = require('botbuilder');
 var prompts = require('./prompts');
 const PMKBClient = require('./lib/pmkbClient');
 const async = require('async');
-const _ = require('underscore');
 var handlebars = require('node-handlebars');
 var ssml = require('./ssml');
 var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
@@ -322,12 +321,11 @@ function checkEntity(entity) {
 
 function makeInterpretationCards(interpretations, session, query, callback) {
   const interpretationUrlBase = pmkb_host + '/therapies/';
-  let parts = _.partition(interpretations, (i) => query);
-  interpretations = parts[0].concat(parts[1]);  // Place most relevant genes first
-  const cards = _.map(interpretations, function (i) {
+  interpretations = interpretations.filter(i => query).concat(interpretations.filter(i => !query));  // Place most relevant genes first
+  const cards = interpretations.map(i => {
     const interpretationUrl = interpretationUrlBase + i.id;
     const title = 'Interpretation for ' + query.value;
-    const getNames = (objs) => _.map(objs, (obj) => obj.name);
+    const getNames = (objs) => objs.map(obj => obj.name);
     var genes = "";
     if (i.gene && i.gene.name) {
       genes = i.gene.name;

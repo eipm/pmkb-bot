@@ -28,7 +28,6 @@
     "node-handlebars": "^0.9.7",
     "request": "^2.87.0",
     "restify": "^4.3.0",
-    "underscore": "^1.8.3",
     "xmlbuilder": "^8.2.2",
     "xmlhttprequest": "^1.8.0"
   }
