@@ -1,0 +1,92 @@
+﻿@model Pmkb.Bot.BotHelper
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Bot Chat</title>
+
+    <link href="https://cdn.botframework.com/botframework-webchat/latest/botchat.css" rel="stylesheet" />
+
+    <style>
+        body {
+            font-family: -apple-system, system-ui, BlinkMacSystemFont, Roboto, "Segoe UI", "Helvetica Neue", Helvetica, Arial, sans-serif;
+        }
+        #BotChatGoesHere {
+            border: 1px solid #CF4520;
+            float: left;
+            height: 600px;
+            position: relative;
+            width: 100%;
+        }
+        .wc-header, .wc-message-from-me .wc-message-content {
+            background-color: #CF4520;
+        }
+        .wc-chatview-panel{
+            background-color: #fff;
+        }
+        .wc-card button {
+            color: #CF4520;
+        }
+        .wc-message-from-me svg.wc-message-callout path {
+            fill: #CF4520;
+        }
+        .wc-card button:hover {
+            background-color: #CF4520;
+            border-color: #CF4520;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="BotChatGoesHere"></div>
+
+    <script src="https://cdn.botframework.com/botframework-webchat/latest/botchat.js"></script>
+
+    <script src="https://cdn.botframework.com/botframework-webchat/latest/CognitiveServices.js"></script>
+
+    <script>
+const params = BotChat.queryParams(location.search);
+
+               const user = {
+                    id: params['62qFYs1u4yD'] || '62qFYs1u4yD',
+                    name: params['You'] || 'You'
+               };
+
+               const bot = {
+                    id: params['pmkb'] || 'pmkb',
+                    name: params['PMKB'] || 'PMKB'
+               };
+
+               window.botchatDebug = params['debug'] && params['debug'] === 'true';
+
+               const speechOptions = {
+                    speechRecognizer: new CognitiveServices.SpeechRecognizer({ subscriptionKey: "@Model.SpeechKey" }),
+                    speechSynthesizer: new CognitiveServices.SpeechSynthesizer({
+                         gender: CognitiveServices.SynthesisGender.Female,
+                         subscriptionKey: "@Model.SpeechKey",
+                         voiceName: 'Microsoft Server Speech Text to Speech Voice (en-US, JessaRUS)'
+                    })
+               };
+
+               BotChat.App({
+                    bot: bot,
+                    locale: params['locale'],
+                    resize: 'detect',
+                    speechOptions: speechOptions,
+                    user: user,
+
+                    directLine: {
+                         domain: params['domain'],
+                         token: "@Model.GetBotToken().Replace("\"", "")",
+                         webSocket: params['webSocket'] && params['webSocket'] === 'true' // defaults to true
+                    }
+               }, document.getElementById('BotChatGoesHere'));</script>
+    <script>
+        document.getElementsByClassName('wc-header')[0].innerHTML = '<span>PMKB Bot - Chat</span>';
+    </script>
+</body>
+</html>

@@ -1,0 +1,36 @@
+{
+    "name": "pmkb-bot",
+    "description": "",
+    "services": [
+        {
+            "type": "endpoint",
+            "name": "development",
+            "endpoint": "http://localhost:3978/api/messages",
+            "appId": "",
+            "appPassword": "",
+            "id": "1"
+        },
+        {
+            "type": "endpoint",
+            "name": "production",
+            "endpoint": "http://0.0.0.0:32768/api/messages",
+            "appId": "",
+            "appPassword": "",
+            "id": "2"
+        },
+        {
+            "type": "luis",
+            "name": "pmkb-luis",
+            "appId": "be0ff178-f28c-4a3f-a44e-7c072aec4afe",
+            "authoringKey": "",
+            "subscriptionKey": "55617dc3d0eb494b86b77ea0d2c4de7d",
+            "version": "2.0",
+            "region": "westus",
+            "id": "34"
+        }
+    ],
+    "padlock": "",
+    "version": "2.0",
+    "path": "/Users/paz2010/Projects/pmkb-bot/src/pmkb.bot",
+    "overrides": null
+}

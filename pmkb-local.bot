@@ -1,0 +1,10 @@
+{
+    "name": "pmkb-local",
+    "description": "",
+    "services": [],
+    "padlock": "",
+    "version": "2.0",
+    "path": "/Users/paz2010/Documents/Repos/pmkb-bot/pmkb-local.bot",
+    "overrides": null,
+    "secretKey": ""
+}

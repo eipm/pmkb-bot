@@ -1,0 +1,15 @@
+{
+    "name": "pmkb",
+    "description": "",
+    "secretKey": "",
+    "services": [
+        {
+            "appId": "f27f045c-777a-4ab3-96e7-9d228574d495",
+            "id": "21562520-9113-11e8-bcf4-0bc66ac445e0",
+            "type": "endpoint",
+            "appPassword": "AcrpHJGqCM262XcuqJemL0q",
+            "endpoint": "http://localhost:3978/api/messages",
+            "name": "http://localhost:3978/api/messages"
+        }
+    ]
+}
