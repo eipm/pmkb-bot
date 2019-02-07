@@ -45,5 +45,16 @@
     <None Remove=".gitignore" />
     <None Remove="Dockerfile" />
     <None Remove="Readme.txt" />
+    <None Remove="pmkb.bot" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="pmkb.bot">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Update="Views\Home\Index.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 </Project>

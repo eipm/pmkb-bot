@@ -6,16 +6,16 @@
             "type": "endpoint",
             "name": "development",
             "endpoint": "http://localhost:3978/api/messages",
-            "appId": "",
-            "appPassword": "",
+            "appId": "f27f045c-777a-4ab3-96e7-9d228574d495",
+            "appPassword": "AcrpHJGqCM262XcuqJemL0q",
             "id": "1"
         },
         {
             "type": "endpoint",
             "name": "production",
-            "endpoint": "http://0.0.0.0:32768/api/messages",
-            "appId": "",
-            "appPassword": "",
+            "endpoint": "https://pmkb-bot.azurewebsites.net/api/messages",
+            "appId": "f27f045c-777a-4ab3-96e7-9d228574d495",
+            "appPassword": "AcrpHJGqCM262XcuqJemL0q",
             "id": "2"
         },
         {
