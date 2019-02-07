@@ -12,7 +12,9 @@ namespace Pmkb.Bot
             PmkbApiBaseUri = new Uri(configuration.GetValue<string>("pmkb_api_base_uri"));
             PmkbApiUsername = configuration.GetValue<string>("pmkb_api_username");
             PmkbApiPassword = configuration.GetValue<string>("pmkb_api_password");
+            MicrosoftSpeechApiKey = configuration.GetValue<string>("MicrosoftSpeechApiKey");
             MicrosoftWebChatSecretKey = configuration.GetValue<string>("MicrosoftWebChatSecretKey");
+
             BotFrameworkApiTokensUrl = new Uri(configuration.GetValue<string>("BotFrameworkApiTokensUrl"));
         }
 
@@ -21,6 +23,7 @@ namespace Pmkb.Bot
         public Uri PmkbApiBaseUri { get; private set; }
         public string PmkbApiUsername { get; internal set; }
         public string PmkbApiPassword { get; internal set; }
+        public string MicrosoftSpeechApiKey { get; internal set; }
         public string MicrosoftWebChatSecretKey { get; internal set; }
 
         public Uri BotFrameworkApiTokensUrl { get; internal set; }

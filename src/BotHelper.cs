@@ -7,7 +7,7 @@ namespace Pmkb.Bot
     {
         private Settings _settings;
 
-        public string SpeechKey => _settings.MicrosoftWebChatSecretKey;
+        public string SpeechKey => _settings.MicrosoftSpeechApiKey;
 
         public BotHelper(Settings settings)
         {
