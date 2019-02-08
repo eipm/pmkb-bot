@@ -276,6 +276,10 @@ namespace Pmkb.Bot
                     await SendMesageToNewUserAsync(turnContext, cancellationToken);
                 }
             }
+            else if (turnContext.Activity.Type == ActivityTypes.ContactRelationUpdate)
+            {
+                await SendMesageToNewUserAsync(turnContext, cancellationToken);
+            }
             else
             {
                 await turnContext.SendActivityAsync($"{turnContext.Activity.Type} event detected", cancellationToken: cancellationToken);
@@ -509,7 +513,7 @@ namespace Pmkb.Bot
                 Title = Resources.Prompts.GettingStartedTitle,
                 Subtitle = "PMKB Bot",
                 Text = Resources.Prompts.GettingStartedText,
-                Images = new List<CardImage> { new CardImage(_settings + "/assets/pmkb.jpg") },
+                Images = new List<CardImage> { new CardImage(_settings.Host + "/assets/pmkb.jpg") },
                 Buttons = new List<CardAction> { new CardAction(ActionTypes.ImBack, Resources.Prompts.Examples, value: Resources.Prompts.Examples) }
             }.ToAttachment();
         }
