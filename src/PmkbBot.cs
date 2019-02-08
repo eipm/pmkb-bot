@@ -348,6 +348,8 @@ namespace Pmkb.Bot
 
                 var interpretations = (await _pmkbApi.Interpretations.SearchAsync(query)).Results.Interpretations;
 
+                _telemetryClient.TrackTrace($"{interpretations.Count()} Interpretations returned by PMKB API: {JsonConvert.SerializeObject(interpretations)}");
+
                 reply.Text = $"{Resources.Prompts.Found} {interpretations.Count()} {Resources.Prompts.InterpretationsAssociatedWith} \"{text}\"";
                 var sortedInterpretations = interpretations.OrderByDescending(x => x.GetRelevanceScore(query)).ToList();
                 foreach (var i in sortedInterpretations.Take(10))
