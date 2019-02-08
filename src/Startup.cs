@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using Microsoft.ApplicationInsights;
+using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Bot.Builder;
@@ -56,7 +58,10 @@ namespace Pmkb.Bot
         public void ConfigureServices(IServiceCollection services)
         {
             var settings = new Settings(Configuration);
+            TelemetryConfiguration.Active.InstrumentationKey = settings.AppInsightsInstrumentationKey;
+            var telemetryClient = new TelemetryClient();
             services.AddSingleton(settings);
+            services.AddSingleton(telemetryClient);
 
             services.AddScoped(typeof(PmkbApi), (arg) => new PmkbApi(settings.PmkbApiBaseUri, settings.PmkbApiUsername, settings.PmkbApiPassword));
 
@@ -97,6 +102,7 @@ namespace Pmkb.Bot
                 options.OnTurnError = async (context, exception) =>
                 {
                     logger.LogError($"Exception caught : {exception}");
+                    telemetryClient.TrackException(exception);
                     await context.SendActivityAsync("Sorry, it looks like something went wrong.");
                 };
 

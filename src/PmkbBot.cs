@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.ApplicationInsights;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Dialogs;
@@ -54,6 +55,7 @@ namespace Pmkb.Bot
         private readonly DialogSet _dialogs;
         private readonly IHostingEnvironment _hostingEnvironment;
         private readonly BotAccessors _accessors;
+        private readonly TelemetryClient _telemetryClient;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PmkbBot"/> class.
@@ -63,13 +65,14 @@ namespace Pmkb.Bot
         /// <param name="services">The <see cref="BotServices"/> required for LUIS.</param>
         /// <param name="settings">The application's <see cref="Settings"/>.</param>
         /// <param name="pmkbApi">The <see cref="PmkbApi"/> to request data from.</param>
-        public PmkbBot(IHostingEnvironment hostingEnvironment, BotAccessors accessors, BotServices services, Settings settings, PmkbApi pmkbApi)
+        public PmkbBot(IHostingEnvironment hostingEnvironment, BotAccessors accessors, BotServices services, Settings settings, PmkbApi pmkbApi, TelemetryClient telemetryClient)
         {
             _hostingEnvironment = hostingEnvironment ?? throw new ArgumentNullException(nameof(hostingEnvironment));
             _accessors = accessors ?? throw new ArgumentNullException(nameof(accessors));
             _services = services ?? throw new ArgumentNullException(nameof(services));
             _settings = settings ?? throw new ArgumentNullException(nameof(settings));
             _pmkbApi = pmkbApi ?? throw new ArgumentNullException(nameof(pmkbApi));
+            _telemetryClient = telemetryClient ?? throw new ArgumentNullException(nameof(telemetryClient));
 
             if (!_services.LuisServices.ContainsKey(LuisKey))
             {
@@ -218,10 +221,14 @@ namespace Pmkb.Bot
                 throw new ArgumentNullException(nameof(turnContext));
             }
 
+            _telemetryClient.TrackEvent($"{turnContext.Activity.Type} event detected");
+
             if (turnContext.Activity.Type == ActivityTypes.Message)
             {
                 var dialogContext = await _dialogs.CreateContextAsync(turnContext, cancellationToken);
                 var text = dialogContext.Context.Activity.Text;
+
+                _telemetryClient.TrackTrace($"Incoming message text: '{text}'");
 
                 if (text.Contains(Resources.Prompts.Genes, StringComparison.OrdinalIgnoreCase))
                 {
@@ -280,10 +287,6 @@ namespace Pmkb.Bot
             {
                 await SendMesageToNewUserAsync(turnContext, cancellationToken);
             }
-            else
-            {
-                await turnContext.SendActivityAsync($"{turnContext.Activity.Type} event detected", cancellationToken: cancellationToken);
-            }
 
             // Save the dialog state into the conversation state.
             await _accessors.ConversationState.SaveChangesAsync(turnContext, false, cancellationToken);
@@ -340,6 +343,8 @@ namespace Pmkb.Bot
                     .Concat(deserializedEntity.Variants.Select(x => x.Text))
                     .Concat(deserializedEntity.TumorTypes.Select(x => x.Text))
                     .Concat(deserializedEntity.TissueTypes.Select(x => x.Text)));
+
+                _telemetryClient.TrackTrace($"Find Gene -- Text sent: '{text}', query: '{query}'");
 
                 var interpretations = (await _pmkbApi.Interpretations.SearchAsync(query)).Results.Interpretations;
 
