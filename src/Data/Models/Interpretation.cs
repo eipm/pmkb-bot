@@ -32,7 +32,7 @@ namespace Pmkb.Bot.Data.Models
         public IEnumerable<PrimarySite> PrimarySites { get; set; }
 
         [JsonProperty("tier")]
-        public int Tier { get; set; }
+        public int? Tier { get; set; }
 
         [JsonProperty("tumors")]
         public IEnumerable<TumorType> TumorTypes { get; set; }
@@ -55,7 +55,7 @@ namespace Pmkb.Bot.Data.Models
              + relatedVariants.Count() * s_pointsIfInVariant
              + relatedTumorTypes.Count() * s_pointsIfInTumorType
              + relatedPrimarySites.Count() * s_pointsIfInPrimarySite
-             + Tier * s_pointsAwardedOnTier;
+             + Tier.GetValueOrDefault() * s_pointsAwardedOnTier;
         }
     }
 }
