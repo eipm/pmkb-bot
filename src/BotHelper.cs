@@ -8,6 +8,7 @@ namespace Pmkb.Bot
         private Settings _settings;
 
         public string SpeechKey => _settings.MicrosoftSpeechApiKey;
+        public string CrisEndpointId => _settings.CrisEndpointId;
         public string AppInsightsInstrumentationKey => _settings.AppInsightsInstrumentationKey;
 
         public BotHelper(Settings settings)

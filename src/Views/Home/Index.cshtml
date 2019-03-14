@@ -64,10 +64,10 @@
 <body>
 
     <div id="BotChatGoesHere"></div>
-
+    <script>var crisEndpointId = "@Model.CrisEndpointId", subscriptionKey = "@Model.SpeechKey"</script>
     <script src="https://cdn.botframework.com/botframework-webchat/latest/botchat.js"></script>
 
-    <script src="https://cdn.botframework.com/botframework-webchat/latest/CognitiveServices.js"></script>
+    <script src="/CognitiveServices.js"></script>
 
     <script>
         const params = BotChat.queryParams(location.search);
@@ -85,10 +85,10 @@
         window.botchatDebug = params['debug'] && params['debug'] === 'true';
 
         const speechOptions = {
-            speechRecognizer: new CognitiveServices.SpeechRecognizer({ subscriptionKey: "@Model.SpeechKey" }),
+            speechRecognizer: new CognitiveServices.SpeechRecognizer({ subscriptionKey: subscriptionKey }),
             speechSynthesizer: new CognitiveServices.SpeechSynthesizer({
                  gender: CognitiveServices.SynthesisGender.Female,
-                 subscriptionKey: "@Model.SpeechKey",
+                 subscriptionKey: subscriptionKey,
                  voiceName: 'Microsoft Server Speech Text to Speech Voice (en-US, JessaRUS)'
             })
         };
