@@ -64,7 +64,7 @@
 <body>
 
     <div id="BotChatGoesHere"></div>
-    <script>var crisEndpointId = "@Model.CrisEndpointId", subscriptionKey = "@Model.SpeechKey"</script>
+    <script>var crisEndpointId = "@Model.CrisEndpointId", subscriptionKey = "@Model.SpeechKey", speechSynthesizerSubscriptionKey = "@Model.SpeechSynthesizerSubscriptionKey"</script>
     <script src="https://cdn.botframework.com/botframework-webchat/latest/botchat.js"></script>
 
     <script src="/CognitiveServices.js"></script>
@@ -88,7 +88,7 @@
             speechRecognizer: new CognitiveServices.SpeechRecognizer({ subscriptionKey: subscriptionKey }),
             speechSynthesizer: new CognitiveServices.SpeechSynthesizer({
                  gender: CognitiveServices.SynthesisGender.Female,
-                 subscriptionKey: subscriptionKey,
+                 subscriptionKey: speechSynthesizerSubscriptionKey,
                  voiceName: 'Microsoft Server Speech Text to Speech Voice (en-US, JessaRUS)'
             })
         };

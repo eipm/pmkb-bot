@@ -15,6 +15,7 @@ namespace Pmkb.Bot
             MicrosoftSpeechApiKey = configuration.GetValue<string>("MicrosoftSpeechApiKey");
             MicrosoftWebChatSecretKey = configuration.GetValue<string>("MicrosoftWebChatSecretKey");
             CrisEndpointId = configuration.GetValue<string>("CrisEndpointId");
+            SpeechSynthesizerSubscriptionKey = configuration.GetValue<string>("SpeechSynthesizerSubscriptionKey");
             AppInsightsInstrumentationKey = configuration.GetValue<string>("AppInsightsInstrumentationKey");
 
             BotFrameworkApiTokensUrl = new Uri(configuration.GetValue<string>("BotFrameworkApiTokensUrl"));
@@ -28,6 +29,7 @@ namespace Pmkb.Bot
         public string MicrosoftSpeechApiKey { get; internal set; }
         public string MicrosoftWebChatSecretKey { get; internal set; }
         public string CrisEndpointId { get; internal set; }
+        public string SpeechSynthesizerSubscriptionKey { get; internal set; }
         public string AppInsightsInstrumentationKey { get; internal set; }
 
         public Uri BotFrameworkApiTokensUrl { get; internal set; }

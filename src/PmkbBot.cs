@@ -376,7 +376,7 @@ namespace Pmkb.Bot
         {
             return new HeroCard
             (
-                $"Tier {interpretation.Tier} {Resources.Prompts.Interpretation}",
+                (interpretation.Tier != null ? $"Tier {interpretation.Tier} " : "") + Resources.Prompts.Interpretation,
                 $@"{Resources.Prompts.Gene}: {interpretation.Gene.Name}
                 {Resources.Prompts.Variants}: {string.Join(", ", interpretation.Variants.Take(10).Select(x => x.Name))}
                 {Resources.Prompts.TumorTypes}: {string.Join(", ", interpretation.TumorTypes.Take(10).Select(x => x.Name))}
