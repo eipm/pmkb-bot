@@ -1,0 +1,110 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>2.0</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    
+    <data name="Greeting" xml:space="preserve">
+        <value>Hi! I am PMKB Bot. I can retrieve information about clinical cancer interpretations from my database.</value>
+    </data>
+    <data name="DisclaimerTitle" xml:space="preserve">
+        <value>Disclaimer</value>
+    </data>
+    <data name="DisclaimerText" xml:space="preserve">
+        <value>You assume full responsibility for all risks associated with using this PMKB website. The Englander Institute for Precision Medicine at Weill Cornell Medicine makes no guarantee of the comprehensiveness, reliability or accuracy of the information on this website and assumes no responsibility for errors in the information associated with this web site. Healthcare providers and patients must integrate all clinical and laboratory findings as well as information from a variety of sources before deciding on appropriate clinical care options.</value>
+    </data>
+    <data name="VisitWebsite" xml:space="preserve">
+        <value>Visit Website</value>
+    </data>
+    <data name="GettingStartedTitle" xml:space="preserve">
+        <value>Getting Started</value>
+    </data>
+    <data name="GettingStartedText" xml:space="preserve">
+        <value>Type your query to get started. If unsure what to do, try 'examples' or click the button below.</value>
+    </data>
+    <data name="Examples" xml:space="preserve">
+        <value>Examples</value>
+    </data>
+    <data name="ExamplePrompt1" xml:space="preserve">
+        <value>Tell me more about BRCA1</value>
+    </data>
+    <data name="ExamplePrompt2" xml:space="preserve">
+        <value>What do you know about BRAF V600E?</value>
+    </data>
+    <data name="ExamplePrompt3" xml:space="preserve">
+        <value>Give me interpretations for EGFR in lung cancer.</value>
+    </data>
+    <data name="ExamplePrompt4" xml:space="preserve">
+        <value>What do you know about Acute Myeloid Leukemia?</value>
+    </data>
+    <data name="WhoAmI1" xml:space="preserve">
+        <value>Who are you</value>
+    </data>
+    <data name="WhoAmI2" xml:space="preserve">
+        <value>What is your name</value>
+    </data>
+    <data name="Genes" xml:space="preserve">
+        <value>Genes</value>
+    </data>
+    <data name="IAmThePmkbBot" xml:space="preserve">
+        <value>I am the PMKB Bot.</value>
+    </data>
+    <data name="GetGenesTitle" xml:space="preserve">
+        <value>All genes in PMKB</value>
+    </data>
+    <data name="ErrorMessage" xml:space="preserve">
+        <value>I'm sorry, I didn't quite get that. Could you please repeat your query making sure to include a gene name, variant, tissue type, or tumor type?</value>
+    </data>
+    <data name="HelloPrompt1" xml:space="preserve">
+        <value>hello</value>
+    </data>
+    <data name="HelloPrompt2" xml:space="preserve">
+        <value>help</value>
+    </data>
+    <data name="HelloPrompt3" xml:space="preserve">
+        <value>hi</value>
+    </data>
+    <data name="ReadMore" xml:space="preserve">
+        <value>Read More</value>
+    </data>
+    <data name="Gene" xml:space="preserve">
+        <value>Gene</value>
+    </data>
+    <data name="Variants" xml:space="preserve">
+        <value>Variants</value>
+    </data>
+    <data name="TumorTypes" xml:space="preserve">
+        <value>Tumor Types</value>
+    </data>
+    <data name="PrimarySites" xml:space="preserve">
+        <value>Primary Sites</value>
+    </data>
+    <data name="Interpretationfor" xml:space="preserve">
+        <value>Interpretation for</value>
+    </data>
+    <data name="Found" xml:space="preserve">
+        <value>Found</value>
+    </data>
+    <data name="InterpretationsAssociatedWith" xml:space="preserve">
+        <value>interpretations associated with</value>
+    </data>
+    <data name="Interpretation" xml:space="preserve">
+        <value>Interpretation</value>
+    </data>
+    <data name="ThereAre" xml:space="preserve">
+        <value>There are</value>
+    </data>
+    <data name="InterpretationsInTotal" xml:space="preserve">
+        <value>interpretations in total. Please click below to read more</value>
+    </data>
+           
+</root>
