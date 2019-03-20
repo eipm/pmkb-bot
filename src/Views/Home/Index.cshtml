@@ -1,0 +1,130 @@
+﻿@model Pmkb.Bot.BotHelper
+@{
+    string token = Model.GetBotToken().Replace("\"", "");
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Bot Chat</title>
+
+    <link href="https://cdn.botframework.com/botframework-webchat/latest/botchat.css" rel="stylesheet" />
+
+    <style>
+        body {
+            font-family: -apple-system, system-ui, BlinkMacSystemFont, Roboto, "Segoe UI", "Helvetica Neue", Helvetica, Arial, sans-serif;
+        }
+
+        #BotChatGoesHere {
+            border: 1px solid #CF4520;
+            float: left;
+            height: 600px;
+            position: relative;
+            width: 100%;
+        }
+
+        .wc-header, .wc-message-from-me .wc-message-content {
+            background-color: #CF4520;
+        }
+
+        .wc-chatview-panel {
+            background-color: #fff;
+        }
+
+        .wc-card button {
+            color: #CF4520;
+        }
+
+        .wc-message-from-me svg.wc-message-callout path {
+            fill: #CF4520;
+        }
+
+        .wc-card button:hover {
+            background-color: #CF4520;
+            border-color: #CF4520;
+            color: #fff;
+        }
+    </style>
+
+    <script type="text/javascript">
+      var appInsights=window.appInsights||function(config){
+        function i(config){t[config]=function(){var i=arguments;t.queue.push(function(){t[config].apply(t,i)})}}var t={config:config},u=document,e=window,o="script",s="AuthenticatedUserContext",h="start",c="stop",l="Track",a=l+"Event",v=l+"Page",y=u.createElement(o),r,f;y.src=config.url||"https://az416426.vo.msecnd.net/scripts/a/ai.0.js";u.getElementsByTagName(o)[0].parentNode.appendChild(y);try{t.cookie=u.cookie}catch(p){}for(t.queue=[],t.version="1.0",r=["Event","Exception","Metric","PageView","Trace","Dependency"];r.length;)i("track"+r.pop());return i("set"+s),i("clear"+s),i(h+a),i(c+a),i(h+v),i(c+v),i("flush"),config.disableExceptionTracking||(r="onerror",i("_"+r),f=e[r],e[r]=function(config,i,u,e,o){var s=f&&f(config,i,u,e,o);return s!==!0&&t["_"+r](config,i,u,e,o),s}),t
+        }({
+            instrumentationKey:"@Model.AppInsightsInstrumentationKey"
+        });
+
+        window.appInsights=appInsights;
+        appInsights.trackPageView();
+    </script>
+
+</head>
+<body>
+
+    <div id="BotChatGoesHere"></div>
+    <script>var crisEndpointId = "@Model.CrisEndpointId", subscriptionKey = "@Model.SpeechKey", speechSynthesizerSubscriptionKey = "@Model.SpeechSynthesizerSubscriptionKey"</script>
+    <script src="https://cdn.botframework.com/botframework-webchat/latest/botchat.js"></script>
+
+    <script src="/CognitiveServices.js"></script>
+
+    <script>
+        const params = BotChat.queryParams(location.search);
+
+        const user = {
+            id: params['62qFYs1u4yD'] || '62qFYs1u4yD',
+            name: params['You'] || 'You'
+        };
+
+        const bot = {
+            id: params['pmkb'] || 'pmkb',
+            name: params['PMKB'] || 'PMKB'
+        };
+
+        window.botchatDebug = params['debug'] && params['debug'] === 'true';
+
+        const speechOptions = {
+            speechRecognizer: new CognitiveServices.SpeechRecognizer({ subscriptionKey: subscriptionKey }),
+            speechSynthesizer: new CognitiveServices.SpeechSynthesizer({
+                 gender: CognitiveServices.SynthesisGender.Female,
+                 subscriptionKey: speechSynthesizerSubscriptionKey,
+                 voiceName: 'Microsoft Server Speech Text to Speech Voice (en-US, JessaRUS)'
+            })
+        };
+
+        const botConnection = new BotChat.DirectLine({
+            token: "@token",
+            user: user
+        });
+
+        BotChat.App({
+            bot: bot,
+            locale: params['locale'],
+            resize: 'detect',
+            speechOptions: speechOptions,
+            user: user,
+
+            directLine: {
+                 domain: params['domain'],
+                 token: "@token",
+                 webSocket: params['webSocket'] && params['webSocket'] === 'true' // defaults to true
+            }
+        }, document.getElementById('BotChatGoesHere'));
+
+        botConnection
+            .postActivity({
+                from: user,
+                name: 'requestWelcomeDialog',
+                type: 'event',
+                value: ''
+            })
+            .subscribe(function (id) {
+                console.log('"trigger requestWelcomeDialog" sent');
+            });
+    </script>
+    <script>
+        document.getElementsByClassName('wc-header')[0].innerHTML = '<span>PMKB Bot - Chat</span>';
+    </script>
+</body>
+</html>
