@@ -4,19 +4,10 @@ PMKB bot for the [Precision Medicine Knowledge Base](https://pmkb.org) using [Mi
 
 [![Docker Automated build](https://img.shields.io/docker/automated/jrottenberg/ffmpeg.svg)](https://hub.docker.com/r/eipm/pmkb-bot/) [![Docker Pulls](https://img.shields.io/docker/pulls/eipm/pmkb-bot.svg)](https://hub.docker.com/r/eipm/pmkb-bot/) [![Docker Stars](https://img.shields.io/docker/stars/eipm/pmkb-bot.svg)](https://hub.docker.com/r/eipm/pmkb-bot/)
 
-## [Deployment Instructions](docs/deployment_instructions.md)
-
-- [1. Deploy on Localhost](docs/deployment_instructions.md#1-deploy-on-localhost)
-- [2. Deploy on Docker](docs/deployment_instructions.md#2-deploy-using-docker)
-- [3. Deploy on Azure](docs/deployment_instructions.md#3-deploy-to-azure)
-
-## Editor Recommendations
-
-- [Get Visual Studio Code](https://code.visualstudio.com/Download)
-
-## Features
+## AI Tools
 
 - [LUIS](https://luis.ai)
+- [CRIS](https://cris.ai/)
 
 ## Demo
 
