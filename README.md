@@ -6,9 +6,9 @@ PMKB bot for the [Precision Medicine Knowledge Base](https://pmkb.org) using [Mi
 
 ## AI Tools
 
-- [LUIS](https://luis.ai)
+- [LUIS](https://www.luis.ai)
 - [CRIS](https://cris.ai/)
 
 ## Demo
 
-[![PMKB Bot Demo](https://media.giphy.com/media/l0Iy1Rbs1TGPRwtj2/giphy.gif)](http://bots.botframework.com/bot?id=pmkb)
+[![PMKB Bot Demo](https://giphy.com/gifs/LOovXGr44hvnzX9V9O)](https://pmkb.org/)
