@@ -11,4 +11,4 @@ PMKB bot for the [Precision Medicine Knowledge Base](https://pmkb.org) using [Mi
 
 ## Demo
 
-[![PMKB Bot Demo](https://giphy.com/gifs/LOovXGr44hvnzX9V9O)](https://pmkb.org/)
+[![PMKB Bot Demo](https://media.giphy.com/media/LOovXGr44hvnzX9V9O/giphy.gif)](https://pmkb.org/)
