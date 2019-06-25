@@ -8,6 +8,6 @@ PMKB bot for the [Precision Medicine Knowledge Base](https://pmkb.org) using [Mi
 
 ## License
 
-Copyright (c) Microsoft Corporation. All rights reserved.
+Copyright (c) Englander Institute for Precision Medicine, Weill Cornell Medicine. All rights reserved.
 
 Licensed under the [MIT](LICENSE) License.
