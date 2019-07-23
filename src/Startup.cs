@@ -40,6 +40,8 @@ namespace Pmkb.Bot
             this.Configuration = builder.Build();
         }
 
+        private IHostingEnvironment CurrentEnvironment { get; set; }
+
         /// <summary>
         /// Gets the configuration that represents a set of key/value application configuration properties.
         /// </summary>
@@ -62,6 +64,7 @@ namespace Pmkb.Bot
             var telemetryClient = new TelemetryClient();
             services.AddSingleton(settings);
             services.AddSingleton(telemetryClient);
+            services.AddSingleton(cards => new Cards(CurrentEnvironment, settings));
 
             services.AddScoped(typeof(PmkbApi), (arg) => new PmkbApi(settings.PmkbApiBaseUri, settings.PmkbApiUsername, settings.PmkbApiPassword));
 
@@ -82,7 +85,6 @@ namespace Pmkb.Bot
             services.AddSingleton(sp => connectedServices);
 
             services.AddSingleton(sp => botConfig);
-            
             services.AddBot<PmkbBot>(options =>
             {
                 // Retrieve current endpoint.
@@ -144,7 +146,7 @@ namespace Pmkb.Bot
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
             _loggerFactory = loggerFactory;
-
+            CurrentEnvironment = env;
             app.UseDefaultFiles()
                 .UseStaticFiles()
                 .UseBotFramework()
