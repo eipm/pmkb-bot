@@ -1,4 +1,4 @@
-{
+﻿{
     "name": "pmkb-bot",
     "description": "",
     "services": [
@@ -23,9 +23,9 @@
             "name": "pmkb-luis",
             "appId": "be0ff178-f28c-4a3f-a44e-7c072aec4afe",
             "authoringKey": "",
-            "subscriptionKey": "55617dc3d0eb494b86b77ea0d2c4de7d",
+            "subscriptionKey": "b3687fdef9de4f83ad046bc8a3f083f6",
             "version": "2.0",
-            "region": "westus",
+            "region": "eastus2",
             "id": "34"
         }
     ],
