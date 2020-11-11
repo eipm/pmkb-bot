@@ -2,7 +2,7 @@
 
 PMKB bot for the [Precision Medicine Knowledge Base](https://pmkb.org) using [Microsoft Bot Framework](https://dev.botframework.com/).
 
-[![MIT Licence](https://badges.frapsoft.com/os/mit/mit.svg?v=103)](https://opensource.org/licenses/mit-license.php) [![Docker Automated build](https://img.shields.io/docker/automated/jrottenberg/ffmpeg.svg)](https://hub.docker.com/r/eipm/pmkb-bot/) [![Docker Pulls](https://img.shields.io/docker/pulls/eipm/pmkb-bot.svg)](https://hub.docker.com/r/eipm/pmkb-bot/) [![Docker Stars](https://img.shields.io/docker/stars/eipm/pmkb-bot.svg)](https://hub.docker.com/r/eipm/pmkb-bot/)
+[![Actions Status](https://github.com/eipm/pmkb-bot/workflows/Docker/badge.svg)](https://github.com/eipm/pmkb-bot/actions) [![Github](https://img.shields.io/badge/github-1.1.00-green?style=flat&logo=github)](https://github.com/eipm/pmkb-bot) [![EIPM Docker Hub](https://img.shields.io/badge/EIPM%20docker%20hub-1.1.00-blue?style=flat&logo=docker)](https://hub.docker.com/repository/docker/eipm/pmkb-bot) [![GitHub Container Registry](https://img.shields.io/badge/GitHub%20Container%20Registry-1.1.00-blue?style=flat&logo=docker)](https://github.com/orgs/eipm/packages/container/package/pmkb-bot) [![MIT Licence](https://badges.frapsoft.com/os/mit/mit.svg?v=103)](https://opensource.org/licenses/mit-license.php)
 
 [![PMKB Bot Demo](https://media.giphy.com/media/LOovXGr44hvnzX9V9O/giphy.gif)](https://pmkb.org/)
 
